@@ -18,30 +18,35 @@ defmodule TradeGalleon.Brokers.AngelOne do
   }
 
   @impl TradeGalleon.Broker
-  def login(%{"clientcode" => _, "password" => _, "totp" => _} = params) do
-    client()
+  def login(%{"clientcode" => _, "password" => _, "totp" => _} = params, opts) do
+    opts
+    |> client()
     |> post(@routes.login, params)
     |> gen_response()
   end
 
+  @impl TradeGalleon.Broker
   def logout(%{token: token, client_code: client_code}) do
     client(token)
     |> post(@routes.logout, %{"clientcode" => client_code})
     |> gen_response()
   end
 
+  @impl TradeGalleon.Broker
   def generate_token(%{token: token, refresh_token: refresh_token}) do
     client(token)
     |> post(@routes.generate_token, %{"refreshToken" => refresh_token})
     |> gen_response()
   end
 
+  @impl TradeGalleon.Broker
   def profile(%{token: token}) do
     client(token)
     |> get(@routes.profile)
     |> gen_response()
   end
 
+  @impl TradeGalleon.Broker
   def portfolio(%{token: token}) do
     client(token)
     |> get(@routes.portfolio)
@@ -50,20 +55,22 @@ defmodule TradeGalleon.Brokers.AngelOne do
 
   @impl TradeGalleon.Broker
   def client(opts \\ []) do
+    config = opts[:config]
+
     headers = [
       {"Content-Type", "application/json"},
       {"Accept", "application/json"},
       {"X-UserType", "USER"},
       {"X-SourceID", "WEB"},
-      {"X-ClientLocalIP", ops[:local_ip]},
-      {"X-ClientPublicIP", opts[:public_ip]},
-      {"X-MACAddress", opts[:mac_address]},
-      {"X-PrivateKey", opts[:api_key]}
+      {"X-ClientLocalIP", config[:local_ip]},
+      {"X-ClientPublicIP", config[:public_ip]},
+      {"X-MACAddress", config[:mac_address]},
+      {"X-PrivateKey", config[:api_key]}
     ]
 
     headers =
       if opts[:token] do
-        [{"authorization", "Bearer " <> token} | headers]
+        [{"authorization", "Bearer " <> opts[:token]} | headers]
       else
         headers
       end
@@ -83,15 +90,19 @@ defmodule TradeGalleon.Brokers.AngelOne do
        end}
     ]
 
+    IO.inspect(middleware)
+
     Tesla.client(middleware)
   end
 
   defp gen_response({:ok, %{body: %{"message" => message} = body} = _env})
        when message == "SUCCESS" do
+    IO.inspect(_env)
     {:ok, body}
   end
 
   defp gen_response({:ok, %{body: body} = _env}) do
+    IO.inspect(_env)
     {:error, body}
   end
 

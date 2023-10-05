@@ -4,6 +4,7 @@ defmodule TradeGalleon.Adapter do
   """
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
+      use Tesla
       @required_config opts[:required_config] || []
 
       @doc """
@@ -25,6 +26,20 @@ defmodule TradeGalleon.Adapter do
         config
         |> Enum.into([])
         |> validate_config
+      end
+
+      def validate_config(nil) do
+        raise ArgumentError, """
+        expected broker config to be set
+
+        ```
+        # config/config.exs
+
+        config :trade_galleon, TradeGalleon.Broker.BrokerXYZ,
+          adapter: TradeGalleon.Broker.BrokerXYZ,
+          secret_api_key: "some_api_key",
+          secret_key: "some_secret_key"
+        """
       end
 
       defp raise_on_missing_config([], _config), do: :ok
