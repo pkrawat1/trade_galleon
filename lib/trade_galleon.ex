@@ -3,9 +3,9 @@ defmodule TradeGalleon do
   Documentation for `TradeGalleon`.
   """
 
-  def login(broker, params, opts \\ []) do
+  def call(broker, action, opts \\ []) do
     config = get_and_validate_config(broker)
-    broker.login(params, [{:config, config} | opts])
+    apply(broker, action, [[{:config, config} | opts]])
   end
 
   defp get_and_validate_config(broker) do

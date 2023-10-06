@@ -17,44 +17,43 @@ defmodule TradeGalleon.Brokers.AngelOne do
     portfolio: "rest/secure/angelbroking/portfolio/v1/getHolding"
   }
 
-  @impl TradeGalleon.Broker
-  def login(%{"clientcode" => _, "password" => _, "totp" => _} = params, opts) do
+  def login(opts) do
     opts
     |> client()
-    |> post(@routes.login, params)
+    |> post(@routes.login, opts[:params])
     |> gen_response()
   end
 
-  @impl TradeGalleon.Broker
-  def logout(%{token: token, client_code: client_code}) do
-    client(token)
-    |> post(@routes.logout, %{"clientcode" => client_code})
+  def logout(opts) do
+    opts
+    |> client()
+    |> post(@routes.logout, opts[:params])
     |> gen_response()
   end
 
-  @impl TradeGalleon.Broker
-  def generate_token(%{token: token, refresh_token: refresh_token}) do
-    client(token)
-    |> post(@routes.generate_token, %{"refreshToken" => refresh_token})
+  def generate_token(opts) do
+    opts
+    |> client()
+    |> post(@routes.generate_token, opts[:params])
     |> gen_response()
   end
 
-  @impl TradeGalleon.Broker
-  def profile(%{token: token}) do
-    client(token)
+  def profile(opts) do
+    opts
+    |> client()
     |> get(@routes.profile)
     |> gen_response()
   end
 
-  @impl TradeGalleon.Broker
-  def portfolio(%{token: token}) do
-    client(token)
+  def portfolio(opts) do
+    opts
+    |> client()
     |> get(@routes.portfolio)
     |> gen_response()
   end
 
   @impl TradeGalleon.Broker
-  def client(opts \\ []) do
+  def client(opts) do
     config = opts[:config]
 
     headers = [
@@ -90,19 +89,17 @@ defmodule TradeGalleon.Brokers.AngelOne do
        end}
     ]
 
-    IO.inspect(middleware)
-
     Tesla.client(middleware)
   end
 
   defp gen_response({:ok, %{body: %{"message" => message} = body} = _env})
        when message == "SUCCESS" do
-    IO.inspect(_env)
+    # IO.inspect(_env)
     {:ok, body}
   end
 
   defp gen_response({:ok, %{body: body} = _env}) do
-    IO.inspect(_env)
+    # IO.inspect(_env)
     {:error, body}
   end
 
