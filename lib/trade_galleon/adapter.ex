@@ -29,16 +29,17 @@ defmodule TradeGalleon.Adapter do
       end
 
       def validate_config(nil) do
+        module = Macro.to_string(__MODULE__)
+
         raise ArgumentError, """
         expected broker config to be set
 
         ```
         # config/config.exs
 
-        config :trade_galleon, TradeGalleon.Broker.BrokerXYZ,
-          adapter: TradeGalleon.Broker.BrokerXYZ,
-          secret_api_key: "some_api_key",
-          secret_key: "some_secret_key"
+        config :trade_galleon, #{module},
+          adapter: #{module},
+          #{Enum.map(@required_config, &"#{&1}: \"some_#{&1}\"\n  ")}
         """
       end
 
