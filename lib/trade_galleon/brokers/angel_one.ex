@@ -65,7 +65,7 @@ defmodule TradeGalleon.Brokers.AngelOne do
     opts
     |> client()
     |> post(@routes.get_candle_data, opts[:params])
-    |> gen_response
+    |> gen_response()
   end
 
   @impl TradeGalleon.Broker
