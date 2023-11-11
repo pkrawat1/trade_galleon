@@ -15,7 +15,8 @@ defmodule TradeGalleon.Brokers.AngelOne do
     generate_token: "rest/auth/angelbroking/jwt/v1/generateTokens",
     profile: "rest/secure/angelbroking/user/v1/getProfile",
     portfolio: "rest/secure/angelbroking/portfolio/v1/getHolding",
-    quote: "rest/secure/angelbroking/market/v1/quote"
+    quote: "rest/secure/angelbroking/market/v1/quote",
+    get_candle_data: "rest/secure/angelbroking/historical/v1/getCandleData"
   }
 
   def login(opts) do
@@ -58,6 +59,13 @@ defmodule TradeGalleon.Brokers.AngelOne do
     |> client()
     |> post(@routes.quote, opts[:params])
     |> gen_response()
+  end
+
+  def get_candle_data(opts) do
+    opts
+    |> client()
+    |> post(@routes.get_candle_data, opts[:params])
+    |> gen_response
   end
 
   @impl TradeGalleon.Broker
