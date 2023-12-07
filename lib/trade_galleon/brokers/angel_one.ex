@@ -73,7 +73,7 @@ defmodule TradeGalleon.Brokers.AngelOne do
   def funds(opts) do
     opts
     |> client()
-    |> post(@routes.funds)
+    |> get(@routes.funds)
     |> gen_response()
   end
 
