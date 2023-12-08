@@ -18,7 +18,8 @@ defmodule TradeGalleon.Brokers.AngelOne do
     quote: "rest/secure/angelbroking/market/v1/quote",
     candle_data: "rest/secure/angelbroking/historical/v1/getCandleData",
     funds: "rest/secure/angelbroking/user/v1/getRMS",
-
+    order_book: "/rest/secure/angelbroking/order/v1/getOrderBook",
+    trade_book: "rest/secure/angelbroking/order/v1/getTradeBook"
   }
 
   def login(opts) do
@@ -74,6 +75,20 @@ defmodule TradeGalleon.Brokers.AngelOne do
     opts
     |> client()
     |> get(@routes.funds)
+    |> gen_response()
+  end
+
+  def order_book(opts) do
+    opts
+    |> client()
+    |> get(@routes.order_book)
+    |> gen_response()
+  end
+
+  def trade_book(opts) do
+    opts
+    |> client()
+    |> get(@routes.trade_book)
     |> gen_response()
   end
 
