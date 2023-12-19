@@ -19,7 +19,11 @@ defmodule TradeGalleon.Brokers.AngelOne do
     candle_data: "rest/secure/angelbroking/historical/v1/getCandleData",
     funds: "rest/secure/angelbroking/user/v1/getRMS",
     order_book: "/rest/secure/angelbroking/order/v1/getOrderBook",
-    trade_book: "rest/secure/angelbroking/order/v1/getTradeBook"
+    trade_book: "rest/secure/angelbroking/order/v1/getTradeBook",
+    search_token: "rest/secure/angelbroking/order/v1/searchScrip",
+    place_order: "rest/secure/angelbroking/order/v1/placeOrder",
+    modify_order: "rest/secure/angelbroking/order/v1/modifyOrder",
+    cancel_order: "rest/secure/angelbroking/order/v1/cancelOrder"
   }
 
   def login(opts) do
@@ -89,6 +93,34 @@ defmodule TradeGalleon.Brokers.AngelOne do
     opts
     |> client()
     |> get(@routes.trade_book)
+    |> gen_response()
+  end
+
+  def search_token(opts) do
+    opts
+    |> client()
+    |> get(@routes.search_token, opts[:params])
+    |> gen_response()
+  end
+
+  def place_order(opts) do
+    opts
+    |> client()
+    |> get(@routes.place_order, opts[:params])
+    |> gen_response()
+  end
+
+  def modify_order(opts) do
+    opts
+    |> client()
+    |> get(@routes.modify_order, opts[:params])
+    |> gen_response()
+  end
+
+  def cancel_order(opts) do
+    opts
+    |> client()
+    |> get(@routes.cancel_order, opts[:params])
     |> gen_response()
   end
 
