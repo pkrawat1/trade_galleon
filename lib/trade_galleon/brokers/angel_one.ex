@@ -99,28 +99,28 @@ defmodule TradeGalleon.Brokers.AngelOne do
   def search_token(opts) do
     opts
     |> client()
-    |> get(@routes.search_token, opts[:params])
+    |> post(@routes.search_token, opts[:params])
     |> gen_response()
   end
 
   def place_order(opts) do
     opts
     |> client()
-    |> get(@routes.place_order, opts[:params])
+    |> post(@routes.place_order, opts[:params])
     |> gen_response()
   end
 
   def modify_order(opts) do
     opts
     |> client()
-    |> get(@routes.modify_order, opts[:params])
+    |> post(@routes.modify_order, opts[:params])
     |> gen_response()
   end
 
   def cancel_order(opts) do
     opts
     |> client()
-    |> get(@routes.cancel_order, opts[:params])
+    |> post(@routes.cancel_order, opts[:params])
     |> gen_response()
   end
 
