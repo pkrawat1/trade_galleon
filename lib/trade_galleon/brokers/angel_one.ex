@@ -23,7 +23,8 @@ defmodule TradeGalleon.Brokers.AngelOne do
     search_token: "rest/secure/angelbroking/order/v1/searchScrip",
     place_order: "rest/secure/angelbroking/order/v1/placeOrder",
     modify_order: "rest/secure/angelbroking/order/v1/modifyOrder",
-    cancel_order: "rest/secure/angelbroking/order/v1/cancelOrder"
+    cancel_order: "rest/secure/angelbroking/order/v1/cancelOrder",
+    order_status: "rest/secure/angelbroking/order/v1/details"
   }
 
   def login(opts) do
@@ -121,6 +122,13 @@ defmodule TradeGalleon.Brokers.AngelOne do
     opts
     |> client()
     |> post(@routes.cancel_order, opts[:params])
+    |> gen_response()
+  end
+
+  def order_status(opts) do
+    opts
+    |> client()
+    |> get(@routes.order_status <> "/" <> opts[:params]["unique_order_id"])
     |> gen_response()
   end
 
