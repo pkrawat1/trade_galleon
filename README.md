@@ -10,7 +10,7 @@ by adding `trade_galleon` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:trade_galleon, "~> 0.1.0"}
+    {:trade_galleon, git: "https://github.com/pkrawat1/trade_galleon.git"},
   ]
 end
 ```
