@@ -160,7 +160,7 @@ defmodule TradeGalleon.Brokers.AngelOne do
       {Tesla.Middleware.Headers, headers},
       {Tesla.Middleware.Retry,
        delay: 1000,
-       max_retries: 10,
+       max_retries: 3,
        max_delay: 4_000,
        should_retry: fn
          {:ok, %{status: status}} when status in [400, 403, 500] -> true
@@ -182,6 +182,9 @@ defmodule TradeGalleon.Brokers.AngelOne do
     # IO.inspect(_env)
     {:error, body}
   end
+
+  defp gen_response({:error, %{body: body}}) when is_binary(body),
+    do: {:error, %{"message" => body}}
 
   defp gen_response({:error, %{body: body}}), do: {:error, body}
 end
