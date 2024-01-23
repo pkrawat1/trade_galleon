@@ -28,6 +28,8 @@ defmodule TradeGalleon.MixProject do
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
       {:tesla, "~> 1.4"},
       {:jason, "~> 1.4"},
+      {:websockex, "~> 0.4.3"},
+      {:phoenix_pubsub, "~> 2.1"},
       {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false}
     ]
   end
