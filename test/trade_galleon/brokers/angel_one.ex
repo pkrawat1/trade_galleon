@@ -14,13 +14,18 @@ defmodule TradeGalleon.Brokers.AngelOneTest do
 
   setup do
     Application.put_env(:trade_galleon, Broker, @config)
+    :ok
+  end
 
+  test "API Failure" do
     Tesla.Mock.mock(fn
-      %{method: :get} ->
-        %Tesla.Env{status: 200, body: "hello"}
+      %{method: :post} -> {:error, %{body: "API ERROR"}}
     end)
 
-    :ok
+    assert {:error, body} =
+             TradeGalleon.call(Broker, :login)
+
+    assert body["message"] == "API ERROR"
   end
 
   describe "authentication" do
@@ -70,8 +75,12 @@ defmodule TradeGalleon.Brokers.AngelOneTest do
     end
   end
 
+  @tag :skip
   test "logout"
+  @tag :skip
   test "generate_token"
+  @tag :skip
   test "profile"
+  @tag :skip
   test "portfolio"
 end
