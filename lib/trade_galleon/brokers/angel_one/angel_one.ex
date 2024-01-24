@@ -178,6 +178,11 @@ defmodule TradeGalleon.Brokers.AngelOne do
     {:ok, body}
   end
 
+  defp gen_response({:ok, %{body: body} = _env}) do
+    # IO.inspect(_env)
+    {:error, body}
+  end
+
   defp gen_response({:error, %{body: body}}) when is_binary(body),
     do: {:error, %{"message" => body}}
 
