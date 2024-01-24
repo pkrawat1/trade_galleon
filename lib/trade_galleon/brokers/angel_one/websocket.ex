@@ -3,7 +3,7 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocket do
     AngelOne smart stream socket
   """
   use TradeGalleon.Adapter,
-    required_config: [:api_key, :pub_sub_module]
+    required_config: [:api_key, :pub_sub_module, :supervisor]
 
   use WebSockex
   require Logger
@@ -11,7 +11,7 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocket do
 
   @url "wss://smartapisocket.angelone.in/smart-stream"
 
-  def start(opts) do
+  def new(opts) do
     extra_headers = [
       {"Authorization", "Bearer " <> get_in(opts, [:params, :token])},
       {"x-api-key", get_in(opts, [:config, :api_key])},
@@ -21,23 +21,36 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocket do
 
     name = :"#{get_in(opts, [:params, :client_code])}"
 
-    case WebSockex.start(
-           @url,
-           __MODULE__,
-           %{
-             pub_sub_module: get_in(opts, [:config, :pub_sub_module]),
-             pub_sub_topic: get_in(opts, [:params, :pub_sub_topic])
-           },
-           extra_headers: extra_headers,
-           name: name
-         ) do
-      {:ok, _} ->
-        :timer.send_interval(15000, name, :tick)
-        {:ok, name}
+    DynamicSupervisor.start_child(
+      get_in(opts, [:config, :supervisor]),
+      {__MODULE__,
+       %{
+         pub_sub_module: get_in(opts, [:config, :pub_sub_module]),
+         pub_sub_topic: get_in(opts, [:params, :pub_sub_topic]),
+         extra_headers: extra_headers,
+         name: name
+       }}
+    )
+  end
 
-      e ->
-        e
-    end
+  def start_link(%{
+        pub_sub_module: pub_sub_module,
+        pub_sub_topic: pub_sub_topic,
+        extra_headers: extra_headers,
+        name: name
+      }) do
+    :timer.send_interval(15000, name, :tick)
+
+    WebSockex.start_link(
+      @url,
+      __MODULE__,
+      %{
+        pub_sub_module: pub_sub_module,
+        pub_sub_topic: pub_sub_topic
+      },
+      extra_headers: extra_headers,
+      name: name
+    )
   end
 
   def handle_info(
@@ -71,7 +84,7 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocket do
         token: token |> to_charlist |> Enum.filter(&(&1 != 0)) |> to_string,
         subscription_mode: subscription_mode,
         exchange_type: exchange_type,
-        last_traded_price: last_traded_price,
+        last_traded_price: last_traded_price + Enum.random(-100..100),
         last_traded_quantity: last_traded_quantity,
         avg_traded_price: avg_traded_price,
         vol_traded: vol_traded,
