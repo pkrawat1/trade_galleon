@@ -1,6 +1,6 @@
 defmodule TradeGalleon.Adapter do
   @moduledoc """
-    Broker API Configuration validator
+    Broker Configuration validator
   """
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
