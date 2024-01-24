@@ -8,6 +8,8 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocket do
       require Logger
       alias Phoenix.PubSub
 
+      @pub_sub_module opts[:pub_sub_module]
+
       @url "wss://smartapisocket.angelone.in/smart-stream"
 
       def start(%{client_code: client_code, token: token, feed_token: feed_token}) do
@@ -62,7 +64,7 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocket do
                _rest::binary>>},
             state
           ) do
-        PubSub.broadcast(AngelTrading.PubSub, state.pub_sub_topic, %{
+        PubSub.broadcast(@pub_sub_module, state.pub_sub_topic, %{
           topic: state.pub_sub_topic,
           payload: %{
             token: token |> to_charlist |> Enum.filter(&(&1 != 0)) |> to_string,
