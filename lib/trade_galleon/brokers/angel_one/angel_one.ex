@@ -24,7 +24,8 @@ defmodule TradeGalleon.Brokers.AngelOne do
     place_order: "rest/secure/angelbroking/order/v1/placeOrder",
     modify_order: "rest/secure/angelbroking/order/v1/modifyOrder",
     cancel_order: "rest/secure/angelbroking/order/v1/cancelOrder",
-    order_status: "rest/secure/angelbroking/order/v1/details"
+    order_status: "rest/secure/angelbroking/order/v1/details",
+    verify_dis: "rest/secure/angelbroking/edis/v1/verifyDis"
   }
 
   def login(opts) do
@@ -129,6 +130,16 @@ defmodule TradeGalleon.Brokers.AngelOne do
     opts
     |> client()
     |> get(@routes.order_status <> "/" <> opts[:params]["unique_order_id"])
+    |> gen_response()
+  end
+
+  def verify_dis(opts) do
+    opts
+    |> client()
+    |> post(@routes.cancel_order, %{
+      "isin" => "INE528G01035",
+      "quantity" => "1"
+    })
     |> gen_response()
   end
 
