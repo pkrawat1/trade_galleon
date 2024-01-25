@@ -136,7 +136,7 @@ defmodule TradeGalleon.Brokers.AngelOne do
   def verify_dis(opts) do
     opts
     |> client()
-    |> post(@routes.cancel_order, %{
+    |> post(@routes.verify_dis, %{
       "isin" => "INE528G01035",
       "quantity" => "1"
     })
