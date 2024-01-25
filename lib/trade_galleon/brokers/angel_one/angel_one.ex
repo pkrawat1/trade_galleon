@@ -25,7 +25,8 @@ defmodule TradeGalleon.Brokers.AngelOne do
     modify_order: "rest/secure/angelbroking/order/v1/modifyOrder",
     cancel_order: "rest/secure/angelbroking/order/v1/cancelOrder",
     order_status: "rest/secure/angelbroking/order/v1/details",
-    verify_dis: "rest/secure/angelbroking/edis/v1/verifyDis"
+    verify_dis: "rest/secure/angelbroking/edis/v1/verifyDis",
+    estimate_charges: "rest/secure/angelbroking/brokerage/v1/estimateCharges"
   }
 
   def login(opts) do
@@ -140,6 +141,13 @@ defmodule TradeGalleon.Brokers.AngelOne do
       "isin" => "INE528G01035",
       "quantity" => "1"
     })
+    |> gen_response()
+  end
+
+  def estimate_charges(opts) do
+    opts
+    |> client()
+    |> post(@routes.estimate_charges, opts[:params])
     |> gen_response()
   end
 
