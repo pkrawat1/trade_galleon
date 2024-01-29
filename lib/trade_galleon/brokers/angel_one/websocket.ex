@@ -66,34 +66,69 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocket do
 
   def handle_frame(
         {:binary,
-         <<subscription_mode::little-integer-size(8), exchange_type::little-integer-size(8),
-           token::binary-size(25), _sequence_number::little-integer-size(64),
-           _exchange_timestamp::little-integer-size(64),
+         <<
+           subscription_mode::little-integer-size(8),
+           exchange_type::little-integer-size(8),
+           token::binary-size(25),
+           sequence_number::little-integer-size(64),
+           exchange_timestamp::little-integer-size(64),
            last_traded_price::little-integer-size(64),
            last_traded_quantity::little-integer-size(64),
-           avg_traded_price::little-integer-size(64), vol_traded::little-integer-size(64),
-           total_buy_quantity::float-size(64), total_sell_quantity::float-size(64),
-           open_price_day::little-integer-size(64), high_price_day::little-integer-size(64),
-           low_price_day::little-integer-size(64), close_price::little-integer-size(64),
-           _rest::binary>>},
+           avg_traded_price::little-integer-size(64),
+           vol_traded::little-integer-size(64),
+           total_buy_quantity::little-float-size(64),
+           total_sell_quantity::little-float-size(64),
+           open_price_day::little-integer-size(64),
+           high_price_day::little-integer-size(64),
+           low_price_day::little-integer-size(64),
+           close_price::little-integer-size(64),
+           _::little-integer-size(64),
+           _::little-integer-size(64),
+           _::little-integer-size(64),
+           best_five::binary-size(200),
+           _rest::binary
+         >>},
         state
       ) do
+    best_five =
+      best_five
+      |> :binary.bin_to_list()
+      |> Enum.chunk_every(20)
+      |> Enum.reverse()
+      |> Enum.map(&:binary.list_to_bin(&1))
+      |> Enum.reduce(%{buy: [], sell: []}, fn data, best_five ->
+        <<flag::little-integer-size(16), quantity::little-integer-size(64),
+          price::little-integer-size(64), _rest::binary>> = data
+
+        new_data =
+          %{quantity: quantity, price: price / 100}
+
+        if flag == 1 do
+          %{best_five | buy: [new_data | best_five.buy]}
+        else
+          %{best_five | sell: [new_data | best_five.sell]}
+        end
+      end)
+
     PubSub.broadcast(state.pub_sub_module, state.pub_sub_topic, %{
       topic: state.pub_sub_topic,
       payload: %{
-        token: token |> to_charlist |> Enum.filter(&(&1 != 0)) |> to_string,
         subscription_mode: subscription_mode,
         exchange_type: exchange_type,
-        last_traded_price: last_traded_price,
+        token: token |> to_charlist |> Enum.filter(&(&1 != 0)) |> to_string,
+        sequence_number: sequence_number,
+        exchange_timestamp: exchange_timestamp,
+        last_traded_price: last_traded_price / 100,
         last_traded_quantity: last_traded_quantity,
-        avg_traded_price: avg_traded_price,
+        avg_traded_price: avg_traded_price / 100,
         vol_traded: vol_traded,
-        total_buy_quantity: total_buy_quantity,
-        total_sell_quantity: total_sell_quantity,
-        open_price_day: open_price_day,
-        high_price_day: high_price_day,
-        low_price_day: low_price_day,
-        close_price: close_price
+        total_buy_quantity: total_buy_quantity |> trunc,
+        total_sell_quantity: total_sell_quantity |> trunc,
+        open_price_day: open_price_day / 100,
+        high_price_day: high_price_day / 100,
+        low_price_day: low_price_day / 100,
+        close_price: close_price / 100,
+        best_five: best_five
       }
     })
 
