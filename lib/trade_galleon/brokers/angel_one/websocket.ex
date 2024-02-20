@@ -19,7 +19,7 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocket do
       {"x-feed-token", get_in(opts, [:params, :feed_token])}
     ]
 
-    name = :"#{get_in(opts, [:params, :client_code])}"
+    name = :"#{get_in(opts, [:params, :client_code])}-quote-stream"
 
     DynamicSupervisor.start_child(
       get_in(opts, [:config, :supervisor]),
