@@ -43,52 +43,66 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocket do
         supervisor: supervisor,
         name: name
       }) do
-    :timer.send_interval(@tick_interval, name, :tick)
+    case WebSockex.start_link(
+           @url,
+           __MODULE__,
+           %{
+             pub_sub_module: pub_sub_module,
+             pub_sub_topic: pub_sub_topic,
+             supervisor: supervisor,
+             subscriber_tick_timeout: @subscriber_tick_timeout,
+             name: name
+           },
+           extra_headers: extra_headers,
+           name: name
+         ) do
+      {:ok, pid} ->
+        Logger.info(
+          "[TradeGalleon][AngelOne][WebSocket][#{name}][#{inspect(pid)}] Process started!!"
+        )
 
-    WebSockex.start_link(
-      @url,
-      __MODULE__,
-      %{
-        pub_sub_module: pub_sub_module,
-        pub_sub_topic: pub_sub_topic,
-        supervisor: supervisor,
-        subscriber_tick_timeout: @subscriber_tick_timeout,
-        name: name
-      },
-      extra_headers: extra_headers,
-      name: name
-    )
+        :timer.send_interval(@tick_interval, pid, :tick)
+        {:ok, pid}
+
+      e ->
+        e
+    end
   end
 
   def handle_info(
         :tick,
-        %{subscriber_tick_timeout: subscriber_tick_timeout} = state
-      )
-      when (subscriber_tick_timeout - @tick_interval) in 1000..@tick_interval do
-    :timer.send(subscriber_tick_timeout - @tick_interval, self(), :tick)
-
-    {:reply, {:text, "ping"},
-     %{state | subscriber_tick_timeout: subscriber_tick_timeout - @tick_interval}}
-  end
-
-  def handle_info(
-        :tick,
-        %{supervisor: supervisor, name: name} = state
+        %{supervisor: supervisor, subscriber_tick_timeout: subscriber_tick_timeout, name: name} =
+          state
       ) do
-    :ok = DynamicSupervisor.terminate_child(supervisor, self())
-    Logger.info("[WebSocket][#{name}][NOSUBS] Teminated process")
-    {:reply, {:text, "no_subscriber_tick"}, state}
+    new_subscriber_tick_timeout = subscriber_tick_timeout - @tick_interval
+
+    case new_subscriber_tick_timeout do
+      timeout when timeout in 1000..(@tick_interval * 2) ->
+        :timer.send_after(new_subscriber_tick_timeout, self(), :tick)
+
+        Logger.info(
+          "[WebSocket][AngelOne][#{name}][NOSUBS] Teminating process in #{new_subscriber_tick_timeout / 1000} seconds"
+        )
+
+        {:reply, {:text, "ping"}, %{state | subscriber_tick_timeout: new_subscriber_tick_timeout}}
+
+      timeout when timeout in (@tick_interval * 2)..@subscriber_tick_timeout ->
+        {:reply, {:text, "ping"}, %{state | subscriber_tick_timeout: new_subscriber_tick_timeout}}
+
+      _ ->
+        Logger.info("[WebSocket][AngelOne][#{name}][NOSUBS] Teminated process")
+        :ok = DynamicSupervisor.terminate_child(supervisor, self())
+    end
   end
 
   def handle_info(:subscriber_tick, state) do
-    Logger.info("[WebSocket][#{name}][SUB] Subcriber Tick")
-
     {:reply, {:text, "subscriber_tick"},
      %{state | subscriber_tick_timeout: @subscriber_tick_timeout}}
   end
 
-  def handle_info(:data, state) do
-    {:reply, state, state}
+  def handle_cast({:send, frame}, %{name: name} = state) do
+    :timer.send_after(0, name, :subscriber_tick)
+    {:reply, frame, state}
   end
 
   def handle_frame(
@@ -163,7 +177,6 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocket do
   end
 
   def handle_frame({_type, _msg}, state) do
-    # Logger.info("Received Message - Topic: #{state.pub_sub_topic} -- Type: #{inspect(_type)} -- Message: #{inspect(_msg)}")
     {:ok, state}
   end
 end
