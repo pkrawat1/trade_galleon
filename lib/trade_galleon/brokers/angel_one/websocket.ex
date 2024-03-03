@@ -10,6 +10,8 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocket do
   alias Phoenix.PubSub
 
   @url "wss://smartapisocket.angelone.in/smart-stream"
+  @tick_interval 15000
+  @subscriber_tick_timeout 120_000
 
   def new(opts) do
     extra_headers = [
@@ -28,6 +30,7 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocket do
          pub_sub_module: get_in(opts, [:config, :pub_sub_module]),
          pub_sub_topic: get_in(opts, [:params, :pub_sub_topic]),
          extra_headers: extra_headers,
+         supervisor: get_in(opts, [:config, :supervisor]),
          name: name
        }}
     )
@@ -37,16 +40,20 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocket do
         pub_sub_module: pub_sub_module,
         pub_sub_topic: pub_sub_topic,
         extra_headers: extra_headers,
+        supervisor: supervisor,
         name: name
       }) do
-    :timer.send_interval(15000, name, :tick)
+    :timer.send_interval(@tick_interval, name, :tick)
 
     WebSockex.start_link(
       @url,
       __MODULE__,
       %{
         pub_sub_module: pub_sub_module,
-        pub_sub_topic: pub_sub_topic
+        pub_sub_topic: pub_sub_topic,
+        supervisor: supervisor,
+        subscriber_tick_timeout: @subscriber_tick_timeout,
+        name: name
       },
       extra_headers: extra_headers,
       name: name
@@ -55,9 +62,29 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocket do
 
   def handle_info(
         :tick,
-        state
+        %{subscriber_tick_timeout: subscriber_tick_timeout} = state
+      )
+      when (subscriber_tick_timeout - @tick_interval) in 1000..@tick_interval do
+    :timer.send(subscriber_tick_timeout - @tick_interval, self(), :tick)
+
+    {:reply, {:text, "ping"},
+     %{state | subscriber_tick_timeout: subscriber_tick_timeout - @tick_interval}}
+  end
+
+  def handle_info(
+        :tick,
+        %{supervisor: supervisor, name: name} = state
       ) do
-    {:reply, {:text, "ping"}, state}
+    :ok = DynamicSupervisor.terminate_child(supervisor, self())
+    Logger.info("[WebSocket][#{name}][NOSUBS] Teminated process")
+    {:reply, {:text, "no_subscriber_tick"}, state}
+  end
+
+  def handle_info(:subscriber_tick, state) do
+    Logger.info("[WebSocket][#{name}][SUB] Subcriber Tick")
+
+    {:reply, {:text, "subscriber_tick"},
+     %{state | subscriber_tick_timeout: @subscriber_tick_timeout}}
   end
 
   def handle_info(:data, state) do
