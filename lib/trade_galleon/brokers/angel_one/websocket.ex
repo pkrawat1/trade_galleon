@@ -96,7 +96,7 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocket do
   end
 
   def handle_info(:subscriber_tick, state) do
-    {:reply, {:text, "subscriber_tick"},
+    {:reply, {:text, "subscriber_tick_reset"},
      %{state | subscriber_tick_timeout: @subscriber_tick_timeout}}
   end
 
