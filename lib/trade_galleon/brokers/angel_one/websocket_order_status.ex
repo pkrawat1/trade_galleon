@@ -10,8 +10,8 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocketOrderStatus do
   alias Phoenix.PubSub
 
   @url "wss://tns.angelone.in/smart-order-update"
-  @tick_interval 9000
-  @subscriber_tick_timeout 120_000
+  @tick_interval :timer.seconds(9)
+  @subscriber_tick_timeout :timer.minutes(5)
 
   def new(opts) do
     extra_headers = [

@@ -10,8 +10,8 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocket do
   alias Phoenix.PubSub
 
   @url "wss://smartapisocket.angelone.in/smart-stream"
-  @tick_interval 15000
-  @subscriber_tick_timeout 120_000
+  @tick_interval :timer.seconds(15)
+  @subscriber_tick_timeout :timer.minutes(5)
 
   def new(opts) do
     extra_headers = [
