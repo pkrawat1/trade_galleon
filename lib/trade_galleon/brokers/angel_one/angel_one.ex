@@ -1,6 +1,6 @@
 defmodule TradeGalleon.Brokers.AngelOne do
   @moduledoc """
-    AngelOne Smart api implementation
+  AngelOne Broker Module to interact with AngelOne API
   """
   use TradeGalleon.Adapter,
     required_config: [:api_key, :local_ip, :public_ip, :mac_address, :secret_key]
@@ -29,6 +29,14 @@ defmodule TradeGalleon.Brokers.AngelOne do
     estimate_charges: "rest/secure/angelbroking/brokerage/v1/estimateCharges"
   }
 
+  @doc """
+  Login to AngelOne API
+
+  ## Example
+
+  iex> TradeGalleon.call(AngelOne, :login, params: %{"clientcode" => "client_code", "password" => "pin", "totp" => "code displayed in authenticator app"})
+      {:ok, %{"message" => "SUCCESS", "data" => %{"jwtToken" => "token", "refreshToken" => "refresh_token", "feedToken" => "feed_token"}}} | {:error, %{"message" => "error message"}}
+  """
   def login(opts) do
     opts
     |> client()
@@ -36,6 +44,14 @@ defmodule TradeGalleon.Brokers.AngelOne do
     |> gen_response()
   end
 
+  @doc """
+  Logout from AngelOne API
+
+  ## Example
+
+  iex> TradeGalleon.call(AngelOne, :logout, params: %{"clientcode" => "client_code"})
+      {:ok, %{"message" => "SUCCESS"}} | {:error, %{"message" => "error message"}}
+  """
   def logout(opts) do
     opts
     |> client()
@@ -43,6 +59,13 @@ defmodule TradeGalleon.Brokers.AngelOne do
     |> gen_response()
   end
 
+  @doc """
+  Generate Token from AngelOne API
+
+  ## Example
+  iex> TradeGalleon.call(AngelOne, :generate_token, token: "token", params: %{"refreshToken" => "refresh_token"})
+      {:ok, %{"message" => "SUCCESS", "data" => %{"jwtToken" => "token", "refreshToken" => "refresh_token", "feedToken" => "feed_token"}}} | {:error, %{"message" => "error message"}}
+  """
   def generate_token(opts) do
     opts
     |> client()
@@ -50,6 +73,13 @@ defmodule TradeGalleon.Brokers.AngelOne do
     |> gen_response()
   end
 
+  @doc """
+  Get Profile from AngelOne API
+
+  ## Example
+  iex> TradeGalleon.call(AngelOne, :profile, token: "token")
+      {:ok, %{"message" => "SUCCESS", "data" => %{"clientcode" => "client_code", "name" => "name", "email" => "email", "mobileno" => "mobile", "exchanges" => "exchanges" ... etc}}} | {:error, %{"message" => "error message"}}
+  """
   def profile(opts) do
     opts
     |> client()
@@ -57,6 +87,13 @@ defmodule TradeGalleon.Brokers.AngelOne do
     |> gen_response()
   end
 
+  @doc """
+  Get Portfolio from AngelOne API
+
+  ## Example
+  iex> TradeGalleon.call(AngelOne, :portfolio, token: "token")
+  {:ok, %{"message" => "SUCCESS", "data" => %{holdings" => [%{...}...], "totalholding" => %{...} ... etc}}} | {:error, %{"message" => "error message"}}
+  """
   def portfolio(opts) do
     opts
     |> client()
@@ -64,6 +101,14 @@ defmodule TradeGalleon.Brokers.AngelOne do
     |> gen_response()
   end
 
+  @doc """
+  Get Quote from AngelOne API
+  doc: https://smartapi.angelbroking.com/docs/MarketData
+
+  ## Example
+  iex> TradeGalleon.call(AngelOne, :quote, token: "token", params: %{"mode" => "full", "exchangeTokens" => %{"NSE" => ["22"]}})
+  {:ok, %{"message" => "SUCCESS", "data" => %{"fetched" => [%{...}...], ... etc}}} | {:error, %{"message" => "error message"}}
+  """
   def quote(opts) do
     opts
     |> client()
@@ -71,6 +116,14 @@ defmodule TradeGalleon.Brokers.AngelOne do
     |> gen_response()
   end
 
+  @doc """
+  Get Candle Data from AngelOne API
+  doc: https://smartapi.angelbroking.com/docs/Historical 
+
+  ## Example
+  iex> TradeGalleon.call(AngelOne, :candle_data, token: "token", params: %{"exchange" => "NSE", "symboltoken" => "22", "interval" => "ONE_MINUTE", "fromdate" => "2021-01-01 11:15", "todate" => "2021-01-01 15:30"})
+  {:ok, %{"message" => "SUCCESS", "data" => [[...]]} | {:error, %{"message" => "error message"}}
+  """
   def candle_data(opts) do
     opts
     |> client()
@@ -78,6 +131,13 @@ defmodule TradeGalleon.Brokers.AngelOne do
     |> gen_response()
   end
 
+  @doc """
+  Get Profile Funds from AngelOne API
+
+  ## Example
+  iex> TradeGalleon.call(AngelOne, :funds, token: "token")
+  {:ok, %{"message" => "SUCCESS", "data" => %{"net" => "99999", "availablecash" => "12345", ... etc}}} | {:error, %{"message" => "error message"}}
+  """
   def funds(opts) do
     opts
     |> client()
@@ -85,6 +145,13 @@ defmodule TradeGalleon.Brokers.AngelOne do
     |> gen_response()
   end
 
+  @doc """
+  Get Order Book from AngelOne API
+
+  ## Example
+  iex> TradeGalleon.call(AngelOne, :order_book, token: "token")
+  {:ok, %{"message" => "SUCCESS", "data" => [%{order...}, ...]} | {:error, %{"message" => "error message"}}
+  """
   def order_book(opts) do
     opts
     |> client()
@@ -92,6 +159,13 @@ defmodule TradeGalleon.Brokers.AngelOne do
     |> gen_response()
   end
 
+  @doc """
+  Get Trade Book from AngelOne API
+
+  ## Example
+  iex> TradeGalleon.call(AngelOne, :trade_book, token: "token")
+  {:ok, %{"message" => "SUCCESS", "data" => [%{trade...}, ...]} | {:error, %{"message" => "error message"}}
+  """
   def trade_book(opts) do
     opts
     |> client()
@@ -99,6 +173,13 @@ defmodule TradeGalleon.Brokers.AngelOne do
     |> gen_response()
   end
 
+  @doc """
+  Search Token from AngelOne API
+
+  ## Example
+  iex> TradeGalleon.call(AngelOne, :search_token, token: token, params: %{"exchange" => "NSE", "searchscrip" => "SBIN"})
+  {:ok, %{"message" => "SUCCESS", "data" => [%{"exchange" => "NSE", "symbol" => "SBIN", "name" => "State Bank of India", "token" => "3045"}, ...etc]} | {:error, %{"message" => "error message"}}
+  """
   def search_token(opts) do
     opts
     |> client()
@@ -106,6 +187,14 @@ defmodule TradeGalleon.Brokers.AngelOne do
     |> gen_response()
   end
 
+  @doc """
+  Place Order from AngelOne API
+  doc: https://smartapi.angelbroking.com/docs/Orders#place
+  
+  ## Example
+  iex> TradeGalleon.call(AngelOne, :place_order, token: token, params: %{"variety" => "NORMAL", "tradingsymbol" => "SBIN-EQ", "symboltoken" => "3045", "transactiontype" => "BUY", "exchange" => "NSE", "ordertype" => "LIMIT", "producttype" => "INTRADAY", "duration" => "DAY", "price" => "200", "quantity" => "1"})
+  {:ok, %{"message" => "SUCCESS", "data" => %{"script" => "SBIN-EQ", "orderid" => "orderid", "uniqueorderid" => "uniqueorderid"}} | {:error, %{"message" => "error message"}}
+  """
   def place_order(opts) do
     opts
     |> client()
@@ -113,6 +202,14 @@ defmodule TradeGalleon.Brokers.AngelOne do
     |> gen_response()
   end
 
+  @doc """
+  Modify Order from AngelOne API
+  doc: https://smartapi.angelbroking.com/docs/Orders#modifyorder
+  
+  ## Example
+  iex> TradeGalleon.call(AngelOne, :modify_order, token: token, params: %{"variety" => "NORMAL", "orderid" => "orderid", "transactiontype" => "BUY", "exchange" => "NSE", "ordertype" => "LIMIT", "producttype" => "INTRADAY", "duration" => "DAY", "price" => "200", "quantity" => "1"})
+  {:ok, %{"message" => "SUCCESS", "data" => %{"script" => "SBIN-EQ", "orderid" => "orderid", "uniqueorderid" => "uniqueorderid"}} | {:error, %{"message" => "error message"}}
+  """
   def modify_order(opts) do
     opts
     |> client()
@@ -120,6 +217,14 @@ defmodule TradeGalleon.Brokers.AngelOne do
     |> gen_response()
   end
 
+  @doc """
+  Cancel Order from AngelOne API
+  doc: https://smartapi.angelbroking.com/docs/Orders#cancelorder
+
+  ## Example
+  iex> TradeGalleon.call(AngelOne, :cancel_order, token: token, params: %{"variety" => "NORMAL", "orderid" => "orderid"})
+  {:ok, %{"message" => "SUCCESS", "data" => %{"orderid" => "orderid", "uniqueorderid" => "uniqueorderid"}} | {:error, %{"message" => "error message"}}
+  """
   def cancel_order(opts) do
     opts
     |> client()
@@ -127,6 +232,14 @@ defmodule TradeGalleon.Brokers.AngelOne do
     |> gen_response()
   end
 
+  @doc """
+  Order Status from AngelOne API
+  doc: https://smartapi.angelbroking.com/docs/Orders#indorder
+
+  ## Example
+  iex> TradeGalleon.call(AngelOne, :order_status, token: token, params: %{"unique_order_id" => "uniqueorderid"})
+  {:ok, %{"message" => "SUCCESS", "data" => %{"status" => "completed", "orderid" => "orderid", "uniqueorderid" => "uniqueorderid", ...etc}} | {:error, %{"message" => "error message"}}
+  """
   def order_status(opts) do
     opts
     |> client()
@@ -134,6 +247,13 @@ defmodule TradeGalleon.Brokers.AngelOne do
     |> gen_response()
   end
 
+  @doc """
+  Verify DIS from AngelOne API
+
+  ## Example
+  iex> TradeGalleon.call(AngelOne, :verify_dis, token: token, params: %{"isin" => "isin", "quantity" => "1"})
+  {:ok, %{"message" => "SUCCESS", "data" => %{...}} | {:error, %{"message" => "error message"}}
+  """
   def verify_dis(opts) do
     opts
     |> client()
@@ -141,6 +261,13 @@ defmodule TradeGalleon.Brokers.AngelOne do
     |> gen_response()
   end
 
+  @doc """
+  Estimate Charges for order from AngelOne API
+
+  ## Example
+  iex> TradeGalleon.call(AngelOne, :estimate_charges, token: token, params: %{"orders" => [%{"symbol_name" => "SBIN-EQ", "token" => "3045", "transaction_type" => "BUY", "exchange" => "NSE",  "product_type" => "INTRADAY", "price" => "200", "quantity" => "1"}]})
+  {:ok, %{"message" => "SUCCESS", "data" => %{...}} | {:error, %{"message" => "error message"}}
+  """
   def estimate_charges(opts) do
     opts
     |> client()
