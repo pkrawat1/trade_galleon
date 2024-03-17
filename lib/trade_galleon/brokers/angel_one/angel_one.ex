@@ -190,7 +190,7 @@ defmodule TradeGalleon.Brokers.AngelOne do
   @doc """
   Place Order from AngelOne API
   doc: https://smartapi.angelbroking.com/docs/Orders#place
-  
+
   ## Example
   iex> TradeGalleon.call(AngelOne, :place_order, token: token, params: %{"variety" => "NORMAL", "tradingsymbol" => "SBIN-EQ", "symboltoken" => "3045", "transactiontype" => "BUY", "exchange" => "NSE", "ordertype" => "LIMIT", "producttype" => "INTRADAY", "duration" => "DAY", "price" => "200", "quantity" => "1"})
   {:ok, %{"message" => "SUCCESS", "data" => %{"script" => "SBIN-EQ", "orderid" => "orderid", "uniqueorderid" => "uniqueorderid"}} | {:error, %{"message" => "error message"}}
@@ -205,7 +205,7 @@ defmodule TradeGalleon.Brokers.AngelOne do
   @doc """
   Modify Order from AngelOne API
   doc: https://smartapi.angelbroking.com/docs/Orders#modifyorder
-  
+
   ## Example
   iex> TradeGalleon.call(AngelOne, :modify_order, token: token, params: %{"variety" => "NORMAL", "orderid" => "orderid", "transactiontype" => "BUY", "exchange" => "NSE", "ordertype" => "LIMIT", "producttype" => "INTRADAY", "duration" => "DAY", "price" => "200", "quantity" => "1"})
   {:ok, %{"message" => "SUCCESS", "data" => %{"script" => "SBIN-EQ", "orderid" => "orderid", "uniqueorderid" => "uniqueorderid"}} | {:error, %{"message" => "error message"}}
