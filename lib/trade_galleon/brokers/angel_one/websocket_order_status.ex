@@ -1,6 +1,7 @@
 defmodule TradeGalleon.Brokers.AngelOne.WebSocketOrderStatus do
   @moduledoc """
-    AngelOne Websocket Order Status
+  This module is responsible for handling the WebSocket connection for order status updates from AngelOne.
+  doc: https://smartapi.angelbroking.com/docs/WebSocketOrderStatus
   """
   use TradeGalleon.Adapter,
     required_config: [:pub_sub_module, :supervisor]
@@ -13,6 +14,20 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocketOrderStatus do
   @tick_interval :timer.seconds(9)
   @subscriber_tick_timeout :timer.minutes(5)
 
+  @doc """
+  Starts a new WebSocket connection for order status updates from AngelOne.
+
+  ## Examples
+
+      iex> TradeGalleon.call(AngelOne.WebSocketOrderStatus, :new,
+            params: %{
+              client_code: client_code,
+              token: token,
+              feed_token: feed_token,
+              pub_sub_topic: pub_sub_topic
+            }
+          )
+  """
   def new(opts) do
     extra_headers = [
       {"Authorization", "Bearer " <> get_in(opts, [:params, :token])}
@@ -33,13 +48,13 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocketOrderStatus do
     )
   end
 
-  def start_link(%{
-        pub_sub_module: pub_sub_module,
-        pub_sub_topic: pub_sub_topic,
-        extra_headers: extra_headers,
-        supervisor: supervisor,
-        name: name
-      }) do
+  defp start_link(%{
+         pub_sub_module: pub_sub_module,
+         pub_sub_topic: pub_sub_topic,
+         extra_headers: extra_headers,
+         supervisor: supervisor,
+         name: name
+       }) do
     case WebSockex.start_link(
            @url,
            __MODULE__,

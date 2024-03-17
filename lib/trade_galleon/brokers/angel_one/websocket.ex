@@ -1,6 +1,7 @@
 defmodule TradeGalleon.Brokers.AngelOne.WebSocket do
   @moduledoc """
-    AngelOne smart stream socket
+  This module is responsible for handling the Quote WebSocket connection with AngelOne.
+  doc: https://smartapi.angelbroking.com/docs/WebSocket2
   """
   use TradeGalleon.Adapter,
     required_config: [:api_key, :pub_sub_module, :supervisor]
@@ -13,6 +14,20 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocket do
   @tick_interval :timer.seconds(15)
   @subscriber_tick_timeout :timer.minutes(5)
 
+  @doc """
+  Starts a new WebSocket connection with AngelOne.
+
+  ## Examples
+
+      iex> TradeGalleon.call(AngelOne.WebSocket, :new,
+            params: %{
+              client_code: client_code,
+              token: token,
+              feed_token: feed_token,
+              pub_sub_topic: pub_sub_topic
+            }
+          )
+  """
   def new(opts) do
     extra_headers = [
       {"Authorization", "Bearer " <> get_in(opts, [:params, :token])},
@@ -36,13 +51,13 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocket do
     )
   end
 
-  def start_link(%{
-        pub_sub_module: pub_sub_module,
-        pub_sub_topic: pub_sub_topic,
-        extra_headers: extra_headers,
-        supervisor: supervisor,
-        name: name
-      }) do
+  defp start_link(%{
+         pub_sub_module: pub_sub_module,
+         pub_sub_topic: pub_sub_topic,
+         extra_headers: extra_headers,
+         supervisor: supervisor,
+         name: name
+       }) do
     case WebSockex.start_link(
            @url,
            __MODULE__,
