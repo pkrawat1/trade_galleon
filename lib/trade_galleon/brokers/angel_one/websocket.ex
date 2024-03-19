@@ -51,7 +51,7 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocket do
     )
   end
 
-  defp start_link(%{
+  def start_link(%{
          pub_sub_module: pub_sub_module,
          pub_sub_topic: pub_sub_topic,
          extra_headers: extra_headers,
