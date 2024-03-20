@@ -49,12 +49,12 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocketOrderStatus do
   end
 
   def start_link(%{
-         pub_sub_module: pub_sub_module,
-         pub_sub_topic: pub_sub_topic,
-         extra_headers: extra_headers,
-         supervisor: supervisor,
-         name: name
-       }) do
+        pub_sub_module: pub_sub_module,
+        pub_sub_topic: pub_sub_topic,
+        extra_headers: extra_headers,
+        supervisor: supervisor,
+        name: name
+      }) do
     case WebSockex.start_link(
            @url,
            __MODULE__,

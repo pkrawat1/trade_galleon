@@ -19,7 +19,7 @@ defmodule TradeGalleon.Brokers.AngelOneTest do
     "portfolio" => {"rest/secure/angelbroking/portfolio/v1/getHolding", :get},
     "quote" => {"rest/secure/angelbroking/market/v1/quote", :post},
     "candle_data" => {"rest/secure/angelbroking/historical/v1/getCandleData", :post},
-    "funds" => {"rest/secure/angelbroking/user/v1/getRMS", :post},
+    "funds" => {"rest/secure/angelbroking/user/v1/getRMS", :get},
     "order_book" => {"/rest/secure/angelbroking/order/v1/getOrderBook", :post},
     "trade_book" => {"rest/secure/angelbroking/order/v1/getTradeBook", :post},
     "search_token" => {"rest/secure/angelbroking/order/v1/searchScrip", :post},
@@ -49,6 +49,8 @@ defmodule TradeGalleon.Brokers.AngelOneTest do
               "data" => ("#{Broker.Responses}" <> "." <> response_mod)
                     |> String.to_existing_atom()
                     |> Map.from_struct()
+                    |> Enum.map(fn {k, _} -> {k, "\#\{k\}\"} end)
+                    |> Enum.into(%{})
                     |> Jason.encode!()
                     |> Jason.decode!()
             }

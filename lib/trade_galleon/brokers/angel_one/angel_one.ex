@@ -36,12 +36,12 @@ defmodule TradeGalleon.Brokers.AngelOne do
 
   ## Example
 
-  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :login, params: %{"clientcode" => "client_code", "password" => "pin", "totp" => "code displayed in authenticator app"})
-  {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Login{} }}
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :login, params: %{"clientcode" => "clientcode", "password" => "1234", "totp" => "123456"})
+  {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Login{jwtToken: "jwtToken", refreshToken: "refreshToken", feedToken: "feedToken"}}}
   """
   def login(opts) do
     opts
-    |> validate_params(Requests.Login)
+    |> validate_request(Requests.Login)
     |> client()
     |> post(@routes.login, opts[:params])
     |> gen_response(Responses.Login)
@@ -50,14 +50,14 @@ defmodule TradeGalleon.Brokers.AngelOne do
   @doc """
   Logout from AngelOne API
 
-  ## Example
+  Example
 
   iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :logout, params: %{"clientcode" => "client_code"})
   {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Logout{}}}
   """
   def logout(opts) do
     opts
-    |> validate_params(Requests.Logout)
+    |> validate_request(Requests.Logout)
     |> client()
     |> post(@routes.logout, opts[:params])
     |> gen_response(Responses.Logout)
@@ -68,11 +68,11 @@ defmodule TradeGalleon.Brokers.AngelOne do
 
   Example
   iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :generate_token, token: "token", params: %{"refreshToken" => "refresh_token"})
-  {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.GenerateToken{}}}
+  {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.GenerateToken{jwtToken: "jwtToken", refreshToken: "refreshToken", feedToken: "feedToken"}}}
   """
   def generate_token(opts) do
     opts
-    |> validate_params(Requests.GenerateToken)
+    |> validate_request(Requests.GenerateToken)
     |> client()
     |> post(@routes.generate_token, opts[:params])
     |> gen_response(Responses.GenerateToken)
@@ -87,43 +87,42 @@ defmodule TradeGalleon.Brokers.AngelOne do
   """
   def profile(opts) do
     opts
-    |> validate_params(Requests.Profile)
+    |> validate_request(Requests.Profile)
     |> client()
     |> get(@routes.profile)
     |> gen_response(Responses.Profile)
   end
 
-  @doc """
-  Get Portfolio from AngelOne API
-
-  Example
-  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :portfolio, token: "token")
-  {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Portfolio{}}}
-  """
-  def portfolio(opts) do
-    opts
-    |> validate_params(Requests.Profile)
-    |> client()
-    |> get(@routes.portfolio)
-    |> gen_response(Responses.Portfolio)
-  end
-
-  @doc """
-  Get Quote from AngelOne API
-  doc: https://smartapi.angelbroking.com/docs/MarketData
-
-  Example
-  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :quote, token: "token", params: %{"mode" => "full", "exchangeTokens" => %{"NSE" => ["22"]}})
-  {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Quote{}}}
-  """
-  def quote(opts) do
-    opts
-    |> validate_params(Requests.Quote)
-    |> client()
-    |> post(@routes.quote, opts[:params])
-    |> gen_response(Responses.Quote)
-  end
-
+  # @doc """
+  # Get Portfolio from AngelOne API
+  #
+  # Example
+  # iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :portfolio, token: "token")
+  # {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Portfolio{}}}
+  # """
+  # def portfolio(opts) do
+  # opts
+  # |> validate_request(Requests.Profile)
+  # |> client()
+  # |> get(@routes.portfolio)
+  # |> gen_response(Responses.Portfolio)
+  # end
+  #
+  # @doc """
+  # Get Quote from AngelOne API
+  # doc: https://smartapi.angelbroking.com/docs/MarketData
+  #
+  # Example
+  # iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :quote, token: "token", params: %{"mode" => "full", "exchangeTokens" => %{"NSE" => ["22"]}})
+  # {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Quote{}}}
+  # """
+  # def quote(opts) do
+  # opts
+  # |> validate_request(Requests.Quote)
+  # |> client()
+  # |> post(@routes.quote, opts[:params])
+  # |> gen_response(Responses.Quote)
+  # end
   #
   # @doc """
   # Get Candle Data from AngelOne API
@@ -131,13 +130,14 @@ defmodule TradeGalleon.Brokers.AngelOne do
   #
   # Example
   # iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :candle_data, token: "token", params: %{"exchange" => "NSE", "symboltoken" => "22", "interval" => "ONE_MINUTE", "fromdate" => "2021-01-01 11:15", "todate" => "2021-01-01 15:30"})
-  # {:ok, %{"message" => "SUCCESS", "data" => [[...]]}
+  # {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.CandleData{}}}
   # """
   # def candle_data(opts) do
   # opts
+  # |> validate_request(Requests.CandleData)
   # |> client()
   # |> post(@routes.candle_data, opts[:params])
-  # |> gen_response(Responses.Login)
+  # |> gen_response(Responses.CandleData)
   # end
   #
   # @doc """
@@ -145,15 +145,16 @@ defmodule TradeGalleon.Brokers.AngelOne do
   #
   # Example
   # iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :funds, token: "token")
-  # {:ok, %{"message" => "SUCCESS", "data" => %{"net" => "99999", "availablecash" => "12345"}}}
+  # {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Funds{}}}
   # """
   # def funds(opts) do
   # opts
+  # |> validate_request(Requests.Funds)
   # |> client()
   # |> get(@routes.funds)
-  # |> gen_response(Responses.Login)
+  # |> gen_response(Responses.Funds)
   # end
-  #
+
   # @doc """
   # Get Order Book from AngelOne API
   #
@@ -339,29 +340,23 @@ defmodule TradeGalleon.Brokers.AngelOne do
 
   defp gen_response({:error, %{body: body}}, _module), do: {:error, body}
 
-  defp validate_params(opts, module) do
-    if opts[:params] do
-      struct_str =
-        opts[:params]
-        |> Enum.map(fn {k, v} -> ~s[#{k}: #{inspect(v)}] end)
-        |> Enum.join(", ")
+  defp validate_request(opts, module) do
+    changeset =
+      module
+      |> struct()
+      |> module.changeset(opts[:params] || %{})
 
-      Code.eval_string(~s[%#{module}{#{struct_str}}])
+    if changeset.valid? do
+      opts
+    else
+      raise Ecto.ChangeError, inspect({:error, changeset.errors})
     end
-
-    opts
   end
 
   defp validate_response(response, module) do
-    struct_str =
-      response
-      |> Enum.map(fn {k, v} -> ~s[#{k}: #{inspect(v)}] end)
-      |> Enum.join(", ")
-
-    dbg()
-
-    ~s[%#{module}{#{struct_str}}]
-    |> Code.eval_string()
-    |> elem(0)
+    case module.to_schema(response || %{}) do
+      {:ok, response} -> response
+      {:error, changeset} -> raise Ecto.ChangeError, inspect({:error, changeset.errors})
+    end
   end
 end
