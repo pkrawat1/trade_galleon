@@ -49,8 +49,7 @@ defmodule TradeGalleon.Brokers.AngelOneTest do
               "data" => ("#{Broker.Responses}" <> "." <> response_mod)
                     |> String.to_existing_atom()
                     |> Map.from_struct()
-                    |> Enum.map(fn {k, _} -> {k, "\#\{k\}\"} end)
-                    |> Enum.into(%{})
+                    |> Map.drop([:__meta__])
                     |> Jason.encode!()
                     |> Jason.decode!()
             }

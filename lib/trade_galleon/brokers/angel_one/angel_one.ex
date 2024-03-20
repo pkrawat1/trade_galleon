@@ -37,7 +37,7 @@ defmodule TradeGalleon.Brokers.AngelOne do
   ## Example
 
   iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :login, params: %{"clientcode" => "clientcode", "password" => "1234", "totp" => "123456"})
-  {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Login{jwtToken: "jwtToken", refreshToken: "refreshToken", feedToken: "feedToken"}}}
+  {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Login{}}}
   """
   def login(opts) do
     opts
@@ -68,7 +68,7 @@ defmodule TradeGalleon.Brokers.AngelOne do
 
   Example
   iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :generate_token, token: "token", params: %{"refreshToken" => "refresh_token"})
-  {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.GenerateToken{jwtToken: "jwtToken", refreshToken: "refreshToken", feedToken: "feedToken"}}}
+  {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.GenerateToken{}}}
   """
   def generate_token(opts) do
     opts
@@ -93,68 +93,69 @@ defmodule TradeGalleon.Brokers.AngelOne do
     |> gen_response(Responses.Profile)
   end
 
-  # @doc """
-  # Get Portfolio from AngelOne API
-  #
-  # Example
-  # iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :portfolio, token: "token")
-  # {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Portfolio{}}}
-  # """
-  # def portfolio(opts) do
-  # opts
-  # |> validate_request(Requests.Profile)
-  # |> client()
-  # |> get(@routes.portfolio)
-  # |> gen_response(Responses.Portfolio)
-  # end
-  #
-  # @doc """
-  # Get Quote from AngelOne API
-  # doc: https://smartapi.angelbroking.com/docs/MarketData
-  #
-  # Example
-  # iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :quote, token: "token", params: %{"mode" => "full", "exchangeTokens" => %{"NSE" => ["22"]}})
-  # {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Quote{}}}
-  # """
-  # def quote(opts) do
-  # opts
-  # |> validate_request(Requests.Quote)
-  # |> client()
-  # |> post(@routes.quote, opts[:params])
-  # |> gen_response(Responses.Quote)
-  # end
-  #
-  # @doc """
-  # Get Candle Data from AngelOne API
-  # doc: https://smartapi.angelbroking.com/docs/Historical
-  #
-  # Example
-  # iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :candle_data, token: "token", params: %{"exchange" => "NSE", "symboltoken" => "22", "interval" => "ONE_MINUTE", "fromdate" => "2021-01-01 11:15", "todate" => "2021-01-01 15:30"})
-  # {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.CandleData{}}}
-  # """
-  # def candle_data(opts) do
-  # opts
-  # |> validate_request(Requests.CandleData)
-  # |> client()
-  # |> post(@routes.candle_data, opts[:params])
-  # |> gen_response(Responses.CandleData)
-  # end
-  #
-  # @doc """
-  # Get Profile Funds from AngelOne API
-  #
-  # Example
-  # iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :funds, token: "token")
-  # {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Funds{}}}
-  # """
-  # def funds(opts) do
-  # opts
-  # |> validate_request(Requests.Funds)
-  # |> client()
-  # |> get(@routes.funds)
-  # |> gen_response(Responses.Funds)
-  # end
+  @doc """
+  Get Portfolio from AngelOne API
 
+  Example
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :portfolio, token: "token")
+  {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Portfolio{}}}
+  """
+  def portfolio(opts) do
+    opts
+    |> validate_request(Requests.Profile)
+    |> client()
+    |> get(@routes.portfolio)
+    |> gen_response(Responses.Portfolio)
+  end
+
+  @doc """
+  Get Quote from AngelOne API
+  doc: https://smartapi.angelbroking.com/docs/MarketData
+
+  Example
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :quote, token: "token", params: %{"mode" => "full", "exchangeTokens" => %{"NSE" => ["22"]}})
+  {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Quote{}}}
+  """
+  def quote(opts) do
+    opts
+    |> validate_request(Requests.Quote)
+    |> client()
+    |> post(@routes.quote, opts[:params])
+    |> gen_response(Responses.Quote)
+  end
+
+  @doc """
+  Get Candle Data from AngelOne API
+  doc: https://smartapi.angelbroking.com/docs/Historical
+
+  Example
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :candle_data, token: "token", params: %{"exchange" => "NSE", "symboltoken" => "22", "interval" => "ONE_MINUTE", "fromdate" => "2021-01-01 11:15", "todate" => "2021-01-01 15:30"})
+  {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.CandleData{}}}
+  """
+  def candle_data(opts) do
+    opts
+    |> validate_request(Requests.CandleData)
+    |> client()
+    |> post(@routes.candle_data, opts[:params])
+    |> gen_response(Responses.CandleData)
+  end
+
+  @doc """
+  Get Profile Funds from AngelOne API
+
+  Example
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :funds, token: "token")
+  {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Funds{}}}
+  """
+  def funds(opts) do
+    opts
+    |> validate_request(Requests.Funds)
+    |> client()
+    |> get(@routes.funds)
+    |> gen_response(Responses.Funds)
+  end
+
+  #
   # @doc """
   # Get Order Book from AngelOne API
   #

@@ -109,10 +109,41 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
   end
 
   defmodule CandleData do
-    defstruct [:exchange, :symboltoken, :interval, :fromdate, :todate]
+    use Ecto.Schema
+    import Ecto.Changeset
+
+    @required ~w(exchange symboltoken interval fromdate todate)a
+    @optional ~w()a
+
+    @primary_key false
+    schema "candle data params" do
+      field(:exchange, :string)
+      field(:symboltoken, :string)
+      field(:interval, :string)
+      field(:fromdate, :string)
+      field(:todate, :string)
+    end
+
+    def changeset(ch, params) do
+      cast(ch, params, @required ++ @optional)
+      |> validate_required(@required)
+    end
   end
 
   defmodule Funds do
-    defstruct []
+    use Ecto.Schema
+    import Ecto.Changeset
+
+    @required ~w()a
+    @optional ~w()a
+
+    @primary_key false
+    schema "funds params" do
+    end
+
+    def changeset(ch, params) do
+      cast(ch, params, @required ++ @optional)
+      |> validate_required(@required)
+    end
   end
 end

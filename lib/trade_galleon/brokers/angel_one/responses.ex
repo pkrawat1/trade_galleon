@@ -12,7 +12,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
 
     def to_schema(data) do
       %__MODULE__{}
-      |> cast(data, ~w(jwtToken refreshToken feedToken)a)
+      |> cast(data, __MODULE__.__schema__(:fields))
       |> apply_action(:insert)
     end
   end
@@ -30,7 +30,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
 
     def to_schema(data) do
       %__MODULE__{}
-      |> cast(data, ~w(jwtToken refreshToken feedToken)a)
+      |> cast(data, __MODULE__.__schema__(:fields))
       |> apply_action(:insert)
     end
   end
@@ -45,7 +45,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
 
     def to_schema(data) do
       %__MODULE__{}
-      |> cast(data, [])
+      |> cast(data, __MODULE__.__schema__(:fields))
       |> apply_action(:insert)
     end
   end
@@ -69,39 +69,86 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
 
     def to_schema(data) do
       %__MODULE__{}
-      |> cast(data, [])
+      |> cast(data, __MODULE__.__schema__(:fields))
       |> apply_action(:insert)
     end
   end
 
   defmodule Portfolio do
-    defstruct [:holdings]
+    use Ecto.Schema
+    import Ecto.Changeset
+
+    @primary_key false
+    schema "porfolio response" do
+      field(:holdings, {:array, :map})
+      field(:totalholding, :map)
+    end
+
+    def to_schema(data) do
+      %__MODULE__{}
+      |> cast(data, __MODULE__.__schema__(:fields))
+      |> apply_action(:insert)
+    end
   end
 
   defmodule Quote do
-    defstruct []
+    use Ecto.Schema
+    import Ecto.Changeset
+
+    @primary_key false
+    schema "quote response" do
+      field(:fetched, {:array, :map})
+    end
+
+    def to_schema(data) do
+      %__MODULE__{}
+      |> cast(data, __MODULE__.__schema__(:fields))
+      |> apply_action(:insert)
+    end
   end
 
   defmodule CandleData do
-    defstruct []
+    use Ecto.Schema
+    import Ecto.Changeset
+
+    @primary_key false
+    schema "candle data response" do
+      field(:data, {:array, {:array, :any}})
+    end
+
+    def to_schema(data) do
+      %__MODULE__{}
+      |> cast(data, __MODULE__.__schema__(:fields))
+      |> apply_action(:insert)
+    end
   end
 
   defmodule Funds do
-    defstruct [
-      :availablecash,
-      :availableintradaypayin,
-      :availablelimitmargin,
-      :collateral,
-      :m2mrealized,
-      :m2munrealized,
-      :net,
-      :utiliseddebits,
-      :utilisedexposure,
-      :utilisedholdingsales,
-      :utilisedoptionpremium,
-      :utilisedpayout,
-      :utilisedspan,
-      :utilisedturnover
-    ]
+    use Ecto.Schema
+    import Ecto.Changeset
+
+    @primary_key false
+    schema "funds response" do
+      field(:availablecash, :string)
+      field(:availableintradaypayin, :string)
+      field(:availablelimitmargin, :string)
+      field(:collateral, :string)
+      field(:m2mrealized, :string)
+      field(:m2munrealized, :string)
+      field(:net, :string)
+      field(:utiliseddebits, :string)
+      field(:utilisedexposure, :string)
+      field(:utilisedholdingsales, :string)
+      field(:utilisedoptionpremium, :string)
+      field(:utilisedpayout, :string)
+      field(:utilisedspan, :string)
+      field(:utilisedturnover, :string)
+    end
+
+    def to_schema(data) do
+      %__MODULE__{}
+      |> cast(data, __MODULE__.__schema__(:fields))
+      |> apply_action(:insert)
+    end
   end
 end
