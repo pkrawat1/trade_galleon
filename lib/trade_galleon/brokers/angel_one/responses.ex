@@ -257,4 +257,25 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
       |> apply_action(:insert)
     end
   end
+
+  defmodule VerifyDis do
+    use Ecto.Schema
+    import Ecto.Changeset
+
+    @primary_key false
+    schema "verify dis response" do
+      field(:ReqId, :string)
+      field(:ReturnURL, :string)
+      field(:DPId, :string)
+      field(:BOID, :string)
+      field(:TransDtls, :string)
+      field(:version, :string)
+    end
+
+    def to_schema(data) do
+      %__MODULE__{}
+      |> cast(data, __MODULE__.__schema__(:fields))
+      |> apply_action(:insert)
+    end
+  end
 end

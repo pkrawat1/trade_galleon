@@ -260,4 +260,23 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
       end
     end
   end
+
+  defmodule VerifyDis do
+    use Ecto.Schema
+    import Ecto.Changeset
+
+    @required ~w(isin)a
+    @optional ~w()a
+
+    @primary_key false
+    schema "verify dis params" do
+      field(:isin, :string)
+      field(:quantity, :string)
+    end
+
+    def changeset(ch, params) do
+      cast(ch, params, @required ++ @optional)
+      |> validate_required(@required)
+    end
+  end
 end

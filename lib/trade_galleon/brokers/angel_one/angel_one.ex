@@ -264,20 +264,21 @@ defmodule TradeGalleon.Brokers.AngelOne do
   # |> gen_response(Responses.Login)
   # end
   #
-  # @doc """
-  # Verify DIS from AngelOne API
-  #
-  # Example
-  # iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :verify_dis, token: "token", params: %{"isin" => "isin", "quantity" => "1"})
-  # {:ok, %{"message" => "SUCCESS", "data" => %{...}}
-  # """
-  # def verify_dis(opts) do
-  # opts
-  # |> client()
-  # |> post(@routes.verify_dis, opts[:params])
-  # |> gen_response(Responses.Login)
-  # end
-  #
+  @doc """
+  Verify DIS from AngelOne API
+
+  Example
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :verify_dis, token: "token", params: %{"isin" => "isin", "quantity" => "1"})
+  {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.VerifyDis{}}}
+  """
+  def verify_dis(opts) do
+    opts
+    |> validate_request(Requests.VerifyDis)
+    |> client()
+    |> post(@routes.verify_dis, opts[:params])
+    |> gen_response(Responses.VerifyDis)
+  end
+
   # @doc """
   # Estimate Charges for order from AngelOne API
   #
