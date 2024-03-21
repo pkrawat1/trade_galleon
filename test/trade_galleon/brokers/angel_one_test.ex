@@ -26,7 +26,7 @@ defmodule TradeGalleon.Brokers.AngelOneTest do
     "place_order" => {"rest/secure/angelbroking/order/v1/placeOrder", :post},
     "modify_order" => {"rest/secure/angelbroking/order/v1/modifyOrder", :post},
     "cancel_order" => {"rest/secure/angelbroking/order/v1/cancelOrder", :post},
-    "order_status" => {"rest/secure/angelbroking/order/v1/details", :post},
+    "order_status" => {"rest/secure/angelbroking/order/v1/details", :get},
     "verify_dis" => {"rest/secure/angelbroking/edis/v1/verifyDis", :post},
     "estimate_charges" => {"rest/secure/angelbroking/brokerage/v1/estimateCharges", :post}
   }
@@ -39,7 +39,7 @@ defmodule TradeGalleon.Brokers.AngelOneTest do
         """
         %{
           method: :#{method},
-          url: "#{@base_url}/#{path}",
+          url: "#{@base_url}/#{path}" <> _query,
         } ->
           response_mod = "#{name}" |> String.split("_") |> Enum.map(&String.capitalize/1) |> Enum.join("")
           %Tesla.Env{

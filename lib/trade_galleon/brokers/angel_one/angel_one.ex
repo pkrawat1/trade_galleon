@@ -218,52 +218,54 @@ defmodule TradeGalleon.Brokers.AngelOne do
     |> gen_response(Responses.PlaceOrder)
   end
 
-  #
-  # @doc """
-  # Modify Order from AngelOne API
-  # doc: https://smartapi.angelbroking.com/docs/Orders#modifyorder
-  #
-  # Example
-  # iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :modify_order, token: "token", params: %{"variety" => "NORMAL", "orderid" => "orderid", "transactiontype" => "BUY", "exchange" => "NSE", "ordertype" => "LIMIT", "producttype" => "INTRADAY", "duration" => "DAY", "price" => "200", "quantity" => "1"})
-  # {:ok, %{"message" => "SUCCESS", "data" => %{"script" => "SBIN-EQ", "orderid" => "orderid", "uniqueorderid" => "uniqueorderid"}}
-  # """
-  # def modify_order(opts) do
-  # opts
-  # |> client()
-  # |> post(@routes.modify_order, opts[:params])
-  # |> gen_response(Responses.Login)
-  # end
-  #
-  # @doc """
-  # Cancel Order from AngelOne API
-  # doc: https://smartapi.angelbroking.com/docs/Orders#cancelorder
-  #
-  # Example
-  # iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :cancel_order, token: "token", params: %{"variety" => "NORMAL", "orderid" => "orderid"})
-  # {:ok, %{"message" => "SUCCESS", "data" => %{"orderid" => "orderid", "uniqueorderid" => "uniqueorderid"}}
-  # """
-  # def cancel_order(opts) do
-  # opts
-  # |> client()
-  # |> post(@routes.cancel_order, opts[:params])
-  # |> gen_response(Responses.Login)
-  # end
-  #
-  # @doc """
-  # Order Status from AngelOne API
-  # doc: https://smartapi.angelbroking.com/docs/Orders#indorder
-  #
-  # Example
-  # iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :order_status, token: "token", params: %{"unique_order_id" => "uniqueorderid"})
-  # {:ok, %{"message" => "SUCCESS", "data" => %{"status" => "completed", "orderid" => "orderid", "uniqueorderid" => "uniqueorderid", ...etc}}
-  # """
-  # def order_status(opts) do
-  # opts
-  # |> client()
-  # |> get(@routes.order_status <> "/" <> opts[:params]["unique_order_id"])
-  # |> gen_response(Responses.Login)
-  # end
-  #
+  @doc """
+  Modify Order from AngelOne API
+  doc: https://smartapi.angelbroking.com/docs/Orders#modifyorder
+
+  Example
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :modify_order, token: "token", params: %{"variety" => "NORMAL", "orderid" => "orderid", "transactiontype" => "BUY", "exchange" => "NSE", "ordertype" => "LIMIT", "producttype" => "INTRADAY", "duration" => "DAY", "price" => "200", "quantity" => "1"})
+  {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.ModifyOrder{}}}
+  """
+  def modify_order(opts) do
+    opts
+    |> validate_request(Requests.ModifyOrder)
+    |> client()
+    |> post(@routes.modify_order, opts[:params])
+    |> gen_response(Responses.ModifyOrder)
+  end
+
+  @doc """
+  Cancel Order from AngelOne API
+  doc: https://smartapi.angelbroking.com/docs/Orders#cancelorder
+
+  Example
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :cancel_order, token: "token", params: %{"variety" => "NORMAL", "orderid" => "orderid"})
+  {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.CancelOrder{}}}
+  """
+  def cancel_order(opts) do
+    opts
+    |> validate_request(Requests.CancelOrder)
+    |> client()
+    |> post(@routes.cancel_order, opts[:params])
+    |> gen_response(Responses.CancelOrder)
+  end
+
+  @doc """
+  Order Status from AngelOne API
+  doc: https://smartapi.angelbroking.com/docs/Orders#indorder
+
+  Example
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :order_status, token: "token", params: %{"unique_order_id" => "uniqueorderid"})
+  {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.OrderStatus{}}}
+  """
+  def order_status(opts) do
+    opts
+    |> validate_request(Requests.OrderStatus)
+    |> client()
+    |> get(@routes.order_status <> "/" <> opts[:params]["unique_order_id"])
+    |> gen_response(Responses.OrderStatus)
+  end
+
   @doc """
   Verify DIS from AngelOne API
 
@@ -279,19 +281,20 @@ defmodule TradeGalleon.Brokers.AngelOne do
     |> gen_response(Responses.VerifyDis)
   end
 
-  # @doc """
-  # Estimate Charges for order from AngelOne API
-  #
-  # Example
-  # iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :estimate_charges, token: "token", params: %{"orders" => [%{"symbol_name" => "SBIN-EQ", "token" => "3045", "transaction_type" => "BUY", "exchange" => "NSE",  "product_type" => "INTRADAY", "price" => "200", "quantity" => "1"}]})
-  # {:ok, %{"message" => "SUCCESS", "data" => %{...}}
-  # """
-  # def estimate_charges(opts) do
-  # opts
-  # |> client()
-  # |> post(@routes.estimate_charges, opts[:params])
-  # |> gen_response(Responses.Login)
-  # end
+  @doc """
+  Estimate Charges for order from AngelOne API
+
+  Example
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :estimate_charges, token: "token", params: %{"orders" => [%{"symbol_name" => "SBIN-EQ", "token" => "3045", "transaction_type" => "BUY", "exchange" => "NSE",  "product_type" => "INTRADAY", "price" => "200", "quantity" => "1"}]})
+  {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.EstimateCharges{}}}
+  """
+  def estimate_charges(opts) do
+    opts
+    |> validate_request(Requests.EstimateCharges)
+    |> client()
+    |> post(@routes.estimate_charges, opts[:params])
+    |> gen_response(Responses.EstimateCharges)
+  end
 
   @impl TradeGalleon.Broker
   def client(opts) do
@@ -349,15 +352,9 @@ defmodule TradeGalleon.Brokers.AngelOne do
   defp gen_response({:error, %{body: body}}, _module), do: {:error, body}
 
   defp validate_request(opts, module) do
-    changeset =
-      module
-      |> struct()
-      |> module.changeset(opts[:params] || %{})
-
-    if changeset.valid? do
-      opts
-    else
-      raise Ecto.ChangeError, inspect({:error, changeset.errors})
+    case module.to_schema(opts[:params] || %{}) do
+      {:ok, module_struct} -> Keyword.put(opts, :params, module_struct)
+      {:error, changeset} -> raise Ecto.ChangeError, inspect({:error, changeset.errors})
     end
   end
 
