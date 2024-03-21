@@ -91,7 +91,6 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
         field(:product, :string)
         field(:collateralquantity, :integer)
         field(:collateraltype, :string)
-        field(:haircut, :integer)
         field(:averageprice, :float)
         field(:ltp, :float)
         field(:symboltoken, :string)
