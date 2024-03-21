@@ -102,7 +102,7 @@ defmodule TradeGalleon.Brokers.AngelOne do
   """
   def portfolio(opts) do
     opts
-    |> validate_request(Requests.Profile)
+    |> validate_request(Requests.Portfolio)
     |> client()
     |> get(@routes.portfolio)
     |> gen_response(Responses.Portfolio)
@@ -155,63 +155,69 @@ defmodule TradeGalleon.Brokers.AngelOne do
     |> gen_response(Responses.Funds)
   end
 
-  #
-  # @doc """
-  # Get Order Book from AngelOne API
-  #
-  # Example
-  # iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :order_book, token: "token")
-  # {:ok, %{"message" => "SUCCESS", "data" => [%{order...}, ...]}
-  # """
-  # def order_book(opts) do
-  # opts
-  # |> client()
-  # |> get(@routes.order_book)
-  # |> gen_response(Responses.Login)
-  # end
-  #
-  # @doc """
-  # Get Trade Book from AngelOne API
-  #
-  # Example
-  # iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :trade_book, token: "token")
-  # {:ok, %{"message" => "SUCCESS", "data" => [%{trade...}, ...]}
-  # """
-  # def trade_book(opts) do
-  # opts
-  # |> client()
-  # |> get(@routes.trade_book)
-  # |> gen_response(Responses.Login)
-  # end
-  #
-  # @doc """
-  # Search Token from AngelOne API
-  #
-  # Example
-  # iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :search_token, token: "token", params: %{"exchange" => "NSE", "searchscrip" => "SBIN"})
-  # {:ok, %{"message" => "SUCCESS", "data" => [%{"exchange" => "NSE", "symbol" => "SBIN", "name" => "State Bank of India", "token" => "3045"}, ...etc]}
-  # """
-  # def search_token(opts) do
-  # opts
-  # |> client()
-  # |> post(@routes.search_token, opts[:params])
-  # |> gen_response(Responses.Login)
-  # end
-  #
-  # @doc """
-  # Place Order from AngelOne API
-  # doc: https://smartapi.angelbroking.com/docs/Orders#place
-  #
-  # Example
-  # iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :place_order, token: "token", params: %{"variety" => "NORMAL", "tradingsymbol" => "SBIN-EQ", "symboltoken" => "3045", "transactiontype" => "BUY", "exchange" => "NSE", "ordertype" => "LIMIT", "producttype" => "INTRADAY", "duration" => "DAY", "price" => "200", "quantity" => "1"})
-  # {:ok, %{"message" => "SUCCESS", "data" => %{"script" => "SBIN-EQ", "orderid" => "orderid", "uniqueorderid" => "uniqueorderid"}}
-  # """
-  # def place_order(opts) do
-  # opts
-  # |> client()
-  # |> post(@routes.place_order, opts[:params])
-  # |> gen_response(Responses.Login)
-  # end
+  @doc """
+  Get Order Book from AngelOne API
+
+  Example
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :order_book, token: "token")
+  {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.OrderBook{}}}
+  """
+  def order_book(opts) do
+    opts
+    |> validate_request(Requests.OrderBook)
+    |> client()
+    |> get(@routes.order_book)
+    |> gen_response(Responses.OrderBook)
+  end
+
+  @doc """
+  Get Trade Book from AngelOne API
+
+  Example
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :trade_book, token: "token")
+  {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.TradeBook{}}}
+  """
+  def trade_book(opts) do
+    opts
+    |> validate_request(Requests.TradeBook)
+    |> client()
+    |> get(@routes.trade_book)
+    |> gen_response(Responses.TradeBook)
+  end
+
+  @doc """
+  Search Token from AngelOne API
+
+  Example
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :search_token, token: "token", params: %{"exchange" => "NSE", "searchscrip" => "SBIN"})
+  {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.SearchToken{}}}
+  """
+  def search_token(opts) do
+    opts
+    |> validate_request(Requests.SearchToken)
+    |> client()
+    |> post(@routes.search_token, opts[:params])
+    |> gen_response(Responses.SearchToken)
+  end
+
+  @doc """
+  Place Order from AngelOne API
+  doc: https://smartapi.angelbroking.com/docs/Orders#place
+
+  Example
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :place_order, token: "token", params: %{"variety" => "NORMAL", "tradingsymbol" => "SBIN-EQ", "symboltoken" => "3045", "transactiontype" => "BUY", "exchange" => "NSE", "ordertype" => "LIMIT", "producttype" => "INTRADAY", "duration" => "DAY", "price" => "200", "quantity" => "1"})
+  {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.PlaceOrder{}}}
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :place_order, token: "token", params: %{"variety" => "NORMAL", "tradingsymbol" => "SBIN-EQ", "symboltoken" => "3045", "transactiontype" => "BUY", "exchange" => "NSE", "ordertype" => "STOPLOSS_LIMIT", "triggerprice" => "200", "producttype" => "INTRADAY", "duration" => "DAY", "price" => "200", "quantity" => "1"})
+  {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.PlaceOrder{}}}
+  """
+  def place_order(opts) do
+    opts
+    |> validate_request(Requests.PlaceOrder)
+    |> client()
+    |> post(@routes.place_order, opts[:params])
+    |> gen_response(Responses.PlaceOrder)
+  end
+
   #
   # @doc """
   # Modify Order from AngelOne API

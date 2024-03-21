@@ -146,4 +146,118 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
       |> validate_required(@required)
     end
   end
+
+  defmodule OrderBook do
+    use Ecto.Schema
+    import Ecto.Changeset
+
+    @required ~w()a
+    @optional ~w()a
+
+    @primary_key false
+    schema "order book params" do
+    end
+
+    def changeset(ch, params) do
+      cast(ch, params, @required ++ @optional)
+      |> validate_required(@required)
+    end
+  end
+
+  defmodule TradeBook do
+    use Ecto.Schema
+    import Ecto.Changeset
+
+    @required ~w()a
+    @optional ~w()a
+
+    @primary_key false
+    schema "trade book params" do
+    end
+
+    def changeset(ch, params) do
+      cast(ch, params, @required ++ @optional)
+      |> validate_required(@required)
+    end
+  end
+
+  defmodule SearchToken do
+    use Ecto.Schema
+    import Ecto.Changeset
+
+    @required ~w(exchange searchscrip)a
+    @optional ~w()a
+
+    @primary_key false
+    schema "search token params" do
+      field(:exchange, :string)
+      field(:searchscrip, :string)
+    end
+
+    def changeset(ch, params) do
+      cast(ch, params, @required ++ @optional)
+      |> validate_required(@required)
+    end
+  end
+
+  defmodule PlaceOrder do
+    use Ecto.Schema
+    import Ecto.Changeset
+
+    @required ~w(variety tradingsymbol symboltoken exchange transactiontype ordertype quantity producttype price duration)a
+    @optional ~w(triggerprice squareoff stoploss trailingStopLoss disclosedquantity ordertag)a
+
+    @primary_key false
+    schema "place order params" do
+      field(:variety, Ecto.Enum, values: [:NORMAL, :STOPLOSS, :AMO, :ROBO])
+      field(:tradingsymbol, :string)
+      field(:symboltoken, :string)
+      field(:exchange, Ecto.Enum, values: [:BSE, :NSE, :NFO, :MCX, :BFO, :CDS])
+      field(:transactiontype, Ecto.Enum, values: [:BUY, :SELL])
+      field(:ordertype, Ecto.Enum, values: [:MARKET, :LIMIT, :STOPLOSS_LIMIT, :STOPLOSS_MARKET])
+      field(:quantity, :string)
+      field(:producttype, Ecto.Enum, values: [:DELIVERY, :CARRYFORWARD, :MARGIN, :INTRADAY, :BO])
+      field(:price, :string)
+      field(:triggerprice, :string)
+      field(:squareoff, :string)
+      field(:stoploss, :string)
+      field(:trailingStopLoss, :string)
+      field(:disclosedquantity, :string)
+      field(:duration, Ecto.Enum, values: [:DAY, :IOC])
+      field(:ordertag, :string)
+    end
+
+    def changeset(ch, params) do
+      cast(ch, params, @required ++ @optional)
+      |> validate_required(@required)
+      |> validate_market_order()
+      |> validate_stoploss_order()
+      |> validate_robo_order()
+    end
+
+    defp validate_market_order(ch) do
+      if get_field(ch, :ordertype) == :MARKET do
+        put_change(ch, :price, 0)
+      else
+        ch
+      end
+    end
+
+    defp validate_stoploss_order(ch) do
+      if get_field(ch, :ordertype) == :STOPLOSS_LIMIT ||
+           get_field(ch, :ordertype) == :STOPLOSS_MARKET do
+        validate_required(ch, [:triggerprice])
+      else
+        ch
+      end
+    end
+
+    defp validate_robo_order(ch) do
+      if get_field(ch, :variety) == :ROBO do
+        validate_required(ch, [:squareoff, :stoploss, :trailingStopLoss])
+      else
+        ch
+      end
+    end
+  end
 end
