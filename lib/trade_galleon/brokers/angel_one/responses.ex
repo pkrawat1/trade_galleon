@@ -187,26 +187,26 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
       field(:ordertype, Ecto.Enum, values: [:MARKET, :LIMIT, :STOPLOSS_LIMIT, :STOPLOSS_MARKET])
       field(:producttype, Ecto.Enum, values: [:INTRADAY, :DELIVERY])
       field(:duration, Ecto.Enum, values: [:DAY, :IOC])
-      field(:price, :string)
-      field(:triggerprice, :string)
-      field(:quantity, :string)
-      field(:disclosedquantity, :string)
-      field(:squareoff, :string)
-      field(:stoploss, :string)
-      field(:trailingstoploss, :string)
+      field(:price, :float)
+      field(:triggerprice, :float)
+      field(:quantity, :integer)
+      field(:disclosedquantity, :integer)
+      field(:squareoff, :float)
+      field(:stoploss, :float)
+      field(:trailingstoploss, :float)
       field(:tradingsymbol, :string)
       field(:transactiontype, Ecto.Enum, values: [:BUY, :SELL])
       field(:exchange, Ecto.Enum, values: [:NSE, :BSE, :NFO, :MCX, :BFO, :CDS])
       field(:symboltoken, :string)
       field(:instrumenttype, :string)
-      field(:strikeprice, :string)
+      field(:strikeprice, :float)
       field(:optiontype, :string)
       field(:expirydate, :string)
       field(:lotsize, :string)
       field(:cancelsize, :string)
-      field(:averageprice, :string)
-      field(:filledshares, :string)
-      field(:unfilledshares, :string)
+      field(:averageprice, :float)
+      field(:filledshares, :integer)
+      field(:unfilledshares, :integer)
       field(:orderid, :string)
       field(:text, :string)
       field(:status, :string)
@@ -218,6 +218,11 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
       field(:filltime, :string)
       field(:parentorderid, :string)
       field(:uniqueorderid, :string)
+      field(:ltp, :float)
+      field(:ltp_percent, :float)
+      field(:close, :float)
+      field(:is_gain_today?, :boolean)
+      field(:gain_or_loss, :float)
     end
 
     def changeset(ch, attrs) do
@@ -372,19 +377,22 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule EstimateCharges do
     use Ecto.Schema
     import Ecto.Changeset
+    alias TradeGalleon.Brokers.AngelOne.Responses.EstimateCharges.Breakup
 
     @primary_key false
     schema "estimate charges response" do
+      embeds_many :breakup, Breakup do
+        field(:name, :string)
+        field(:amount, :float)
+        field(:msg, :string)
+        embeds_many(:breakup, Breakup)
+      end
+
       embeds_one :summary, Summary do
         field(:total_charges, :float)
         field(:trade_value, :float)
 
-        embeds_many :breakup, Breakup do
-          field(:name, :string)
-          field(:amount, :float)
-          field(:msg, :string)
-          embeds_many(:breakup, Breakup)
-        end
+        embeds_many(:breakup, Breakup)
       end
 
       embeds_many :charges, Charge do
@@ -403,11 +411,21 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
     end
 
     def summary_changeset(ch, attrs) do
-      cast(ch, attrs, __MODULE__.Summary.__schema__(:fields))
+      ch
+      |> cast(attrs, __MODULE__.Summary.__schema__(:fields) -- [:breakup])
+      |> cast_embed(:breakup, with: &breakup_changeset/2)
     end
 
     def charge_changeset(ch, attrs) do
-      cast(ch, attrs, __MODULE__.Charge.__schema__(:fields))
+      ch
+      |> cast(attrs, __MODULE__.Charge.__schema__(:fields) -- [:breakup])
+      |> cast_embed(:breakup, with: &breakup_changeset/2)
+    end
+
+    def breakup_changeset(ch, attrs) do
+      ch
+      |> cast(attrs, Breakup.__schema__(:fields) -- [:breakup])
+      |> cast_embed(:breakup, with: &breakup_changeset/2)
     end
   end
 end

@@ -419,13 +419,13 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
         field(:token, :string)
         field(:exchange, Ecto.Enum, values: [:BSE, :NSE, :NFO, :MCX, :BFO, :CDS])
         field(:transaction_type, Ecto.Enum, values: [:BUY, :SELL])
-        field(:quantity, :string)
+        field(:quantity, :integer)
 
         field(:product_type, Ecto.Enum,
           values: [:DELIVERY, :CARRYFORWARD, :MARGIN, :INTRADAY, :BO]
         )
 
-        field(:price, :string)
+        field(:price, :decimal)
       end
     end
 
