@@ -2,6 +2,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule Login do
     use Ecto.Schema
     import Ecto.Changeset
+    @derive {Jason.Encoder, only: [:jwtToken, :refreshToken, :feedToken]}
 
     @primary_key false
     schema "login response" do
@@ -20,6 +21,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule GenerateToken do
     use Ecto.Schema
     import Ecto.Changeset
+    @derive {Jason.Encoder, only: [:jwtToken, :refreshToken, :feedToken]}
 
     @primary_key false
     schema "generate token response" do
@@ -54,6 +56,19 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
     use Ecto.Schema
     import Ecto.Changeset
 
+    @derive {Jason.Encoder,
+             only: [
+               :clientcode,
+               :name,
+               :email,
+               :mobileno,
+               :pan,
+               :broker,
+               :exchanges,
+               :products,
+               :lastlogintime
+             ]}
+
     @primary_key false
     schema "profile response" do
       field(:clientcode, :string)
@@ -77,6 +92,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule Portfolio do
     use Ecto.Schema
     import Ecto.Changeset
+    @derive {Jason.Encoder, only: [:holdings]}
 
     @primary_key false
     schema "porfolio response" do
@@ -117,6 +133,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule Quote do
     use Ecto.Schema
     import Ecto.Changeset
+    @derive {Jason.Encoder, only: [:fetched]}
 
     @primary_key false
     schema "quote response" do
@@ -133,6 +150,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule CandleData do
     use Ecto.Schema
     import Ecto.Changeset
+    @derive {Jason.Encoder, only: [:data]}
 
     @primary_key false
     schema "candle data response" do
@@ -151,6 +169,24 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule Funds do
     use Ecto.Schema
     import Ecto.Changeset
+
+    @derive {Jason.Encoder,
+             only: [
+               :availablecash,
+               :availableintradaypayin,
+               :availablelimitmargin,
+               :collateral,
+               :m2mrealized,
+               :m2munrealized,
+               :net,
+               :utiliseddebits,
+               :utilisedexposure,
+               :utilisedholdingsales,
+               :utilisedoptionpremium,
+               :utilisedpayout,
+               :utilisedspan,
+               :utilisedturnover
+             ]}
 
     @primary_key false
     schema "funds response" do
@@ -180,6 +216,50 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule OrderStatus do
     use Ecto.Schema
     import Ecto.Changeset
+
+    @derive {Jason.Encoder,
+             only: [
+               :variety,
+               :ordertype,
+               :producttype,
+               :duration,
+               :price,
+               :triggerprice,
+               :quantity,
+               :disclosedquantity,
+               :squareoff,
+               :stoploss,
+               :trailingstoploss,
+               :tradingsymbol,
+               :transactiontype,
+               :exchange,
+               :symboltoken,
+               :instrumenttype,
+               :strikeprice,
+               :optiontype,
+               :expirydate,
+               :lotsize,
+               :cancelsize,
+               :averageprice,
+               :filledshares,
+               :unfilledshares,
+               :orderid,
+               :text,
+               :status,
+               :orderstatus,
+               :updatetime,
+               :exchtime,
+               :exchorderupdatetime,
+               :fillid,
+               :filltime,
+               :parentorderid,
+               :uniqueorderid,
+               :ltp,
+               :ltp_percent,
+               :close,
+               :is_gain_today?,
+               :gain_or_loss
+             ]}
 
     @primary_key false
     schema "order status schema" do
@@ -277,6 +357,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule SearchToken do
     use Ecto.Schema
     import Ecto.Changeset
+    @derive {Jason.Encoder, only: [:scrips]}
 
     @primary_key false
     schema "search token response" do
@@ -304,6 +385,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule PlaceOrder do
     use Ecto.Schema
     import Ecto.Changeset
+    @derive {Jason.Encoder, only: [:script, :orderid, :uniqueorderid]}
 
     @primary_key false
     schema "place order response" do
@@ -322,6 +404,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule ModifyOrder do
     use Ecto.Schema
     import Ecto.Changeset
+    @derive {Jason.Encoder, only: [:orderid, :uniqueorderid]}
 
     @primary_key false
     schema "modify order response" do
@@ -339,6 +422,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule CancelOrder do
     use Ecto.Schema
     import Ecto.Changeset
+    @derive {Jason.Encoder, only: [:orderid, :uniqueorderid]}
 
     @primary_key false
     schema "cancel order response" do
@@ -356,6 +440,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule VerifyDis do
     use Ecto.Schema
     import Ecto.Changeset
+    @derive {Jason.Encoder, only: [:ReqId, :ReturnURL, :DPId, :BOID, :TransDtls, :version]}
 
     @primary_key false
     schema "verify dis response" do
@@ -378,6 +463,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
     use Ecto.Schema
     import Ecto.Changeset
     alias TradeGalleon.Brokers.AngelOne.Responses.EstimateCharges.Breakup
+    @derive {Jason.Encoder, only: [:breakup, :summary, :charges]}
 
     @primary_key false
     schema "estimate charges response" do
