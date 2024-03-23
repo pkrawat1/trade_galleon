@@ -6,6 +6,8 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocketOrderStatus do
   use TradeGalleon.Adapter,
     required_config: [:pub_sub_module, :supervisor]
 
+  alias TradeGalleon.Brokers.AngelOne.Responses.OrderStatus
+
   use WebSockex
   require Logger
   alias Phoenix.PubSub
@@ -48,13 +50,13 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocketOrderStatus do
     )
   end
 
-  defp start_link(%{
-         pub_sub_module: pub_sub_module,
-         pub_sub_topic: pub_sub_topic,
-         extra_headers: extra_headers,
-         supervisor: supervisor,
-         name: name
-       }) do
+  def start_link(%{
+        pub_sub_module: pub_sub_module,
+        pub_sub_topic: pub_sub_topic,
+        extra_headers: extra_headers,
+        supervisor: supervisor,
+        name: name
+      }) do
     case WebSockex.start_link(
            @url,
            __MODULE__,
@@ -120,9 +122,11 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocketOrderStatus do
   def handle_frame({_, msg}, state) do
     case Jason.decode(msg) do
       {:ok, json_data} ->
+        {:ok, order} = OrderStatus.to_schema(json_data["orderData"])
+
         PubSub.broadcast(state.pub_sub_module, state.pub_sub_topic, %{
           topic: state.pub_sub_topic,
-          payload: json_data
+          payload: order
         })
 
       _ ->

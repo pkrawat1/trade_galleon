@@ -30,6 +30,7 @@ defmodule TradeGalleon.MixProject do
       {:jason, "~> 1.4"},
       {:websockex, "~> 0.4.3"},
       {:phoenix_pubsub, "~> 2.1"},
+      {:ecto, "~> 3.11"},
       {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false}
     ]
   end
