@@ -2,10 +2,10 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule Login do
     use Ecto.Schema
     import Ecto.Changeset
-    @derive {Jason.Encoder, only: [:jwtToken, :refreshToken, :feedToken]}
+    @derive Jason.Encoder
 
     @primary_key false
-    schema "login response" do
+    embedded_schema do
       field(:jwtToken, :string)
       field(:refreshToken, :string)
       field(:feedToken, :string)
@@ -21,10 +21,10 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule GenerateToken do
     use Ecto.Schema
     import Ecto.Changeset
-    @derive {Jason.Encoder, only: [:jwtToken, :refreshToken, :feedToken]}
+    @derive Jason.Encoder
 
     @primary_key false
-    schema "generate token response" do
+    embedded_schema do
       field(:jwtToken, :string)
       field(:refreshToken, :string)
       field(:feedToken, :string)
@@ -42,7 +42,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
     import Ecto.Changeset
 
     @primary_key false
-    schema "logout response" do
+    embedded_schema do
     end
 
     def to_schema(data) do
@@ -56,21 +56,10 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
     use Ecto.Schema
     import Ecto.Changeset
 
-    @derive {Jason.Encoder,
-             only: [
-               :clientcode,
-               :name,
-               :email,
-               :mobileno,
-               :pan,
-               :broker,
-               :exchanges,
-               :products,
-               :lastlogintime
-             ]}
+    @derive Jason.Encoder
 
     @primary_key false
-    schema "profile response" do
+    embedded_schema do
       field(:clientcode, :string)
       field(:name, :string)
       field(:email, :string)
@@ -92,11 +81,12 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule Portfolio do
     use Ecto.Schema
     import Ecto.Changeset
-    @derive {Jason.Encoder, only: [:holdings]}
+    @derive Jason.Encoder
 
     @primary_key false
-    schema "porfolio response" do
+    embedded_schema do
       embeds_many :holdings, Holding do
+        @derive Jason.Encoder
         field(:tradingsymbol, :string)
         field(:exchange, :string)
         field(:isin, :string)
@@ -133,10 +123,10 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule Quote do
     use Ecto.Schema
     import Ecto.Changeset
-    @derive {Jason.Encoder, only: [:fetched]}
+    @derive Jason.Encoder
 
     @primary_key false
-    schema "quote response" do
+    embedded_schema do
       field(:fetched, {:array, :map})
     end
 
@@ -150,10 +140,10 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule CandleData do
     use Ecto.Schema
     import Ecto.Changeset
-    @derive {Jason.Encoder, only: [:data]}
+    @derive Jason.Encoder
 
     @primary_key false
-    schema "candle data response" do
+    embedded_schema do
       field(:data, {:array, {:array, :any}})
     end
 
@@ -170,26 +160,10 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
     use Ecto.Schema
     import Ecto.Changeset
 
-    @derive {Jason.Encoder,
-             only: [
-               :availablecash,
-               :availableintradaypayin,
-               :availablelimitmargin,
-               :collateral,
-               :m2mrealized,
-               :m2munrealized,
-               :net,
-               :utiliseddebits,
-               :utilisedexposure,
-               :utilisedholdingsales,
-               :utilisedoptionpremium,
-               :utilisedpayout,
-               :utilisedspan,
-               :utilisedturnover
-             ]}
+    @derive Jason.Encoder
 
     @primary_key false
-    schema "funds response" do
+    embedded_schema do
       field(:availablecash, :string)
       field(:availableintradaypayin, :string)
       field(:availablelimitmargin, :string)
@@ -217,52 +191,9 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
     use Ecto.Schema
     import Ecto.Changeset
 
-    @derive {Jason.Encoder,
-             only: [
-               :variety,
-               :ordertype,
-               :producttype,
-               :duration,
-               :price,
-               :triggerprice,
-               :quantity,
-               :disclosedquantity,
-               :squareoff,
-               :stoploss,
-               :trailingstoploss,
-               :tradingsymbol,
-               :transactiontype,
-               :exchange,
-               :symboltoken,
-               :instrumenttype,
-               :strikeprice,
-               :optiontype,
-               :expirydate,
-               :lotsize,
-               :cancelsize,
-               :averageprice,
-               :filledshares,
-               :unfilledshares,
-               :orderid,
-               :text,
-               :status,
-               :orderstatus,
-               :updatetime,
-               :exchtime,
-               :exchorderupdatetime,
-               :fillid,
-               :filltime,
-               :parentorderid,
-               :uniqueorderid,
-               :ltp,
-               :ltp_percent,
-               :close,
-               :is_gain_today?,
-               :gain_or_loss
-             ]}
-
+    @derive Jason.Encoder
     @primary_key false
-    schema "order status schema" do
+    embedded_schema do
       field(:variety, Ecto.Enum, values: [:NORMAL, :STOPLOSS, :AMO, :ROBO])
       field(:ordertype, Ecto.Enum, values: [:MARKET, :LIMIT, :STOPLOSS_LIMIT, :STOPLOSS_MARKET])
       field(:producttype, Ecto.Enum, values: [:INTRADAY, :DELIVERY])
@@ -319,9 +250,10 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule OrderBook do
     use Ecto.Schema
     import Ecto.Changeset
+    @derive Jason.Encoder
 
     @primary_key false
-    schema "order book response" do
+    embedded_schema do
       embeds_many(:orders, TradeGalleon.Brokers.AngelOne.Responses.OrderStatus)
     end
 
@@ -338,9 +270,10 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule TradeBook do
     use Ecto.Schema
     import Ecto.Changeset
+    @derive Jason.Encoder
 
     @primary_key false
-    schema "trade book response" do
+    embedded_schema do
       embeds_many(:orders, TradeGalleon.Brokers.AngelOne.Responses.OrderStatus)
     end
 
@@ -357,11 +290,12 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule SearchToken do
     use Ecto.Schema
     import Ecto.Changeset
-    @derive {Jason.Encoder, only: [:scrips]}
+    @derive Jason.Encoder
 
     @primary_key false
-    schema "search token response" do
+    embedded_schema do
       embeds_many :scrips, Scrip do
+        @derive Jason.Encoder
         field(:exchange, :string)
         field(:tradingsymbol, :string)
         field(:symboltoken, :string)
@@ -385,10 +319,10 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule PlaceOrder do
     use Ecto.Schema
     import Ecto.Changeset
-    @derive {Jason.Encoder, only: [:script, :orderid, :uniqueorderid]}
+    @derive Jason.Encoder
 
     @primary_key false
-    schema "place order response" do
+    embedded_schema do
       field(:script, :string)
       field(:orderid, :string)
       field(:uniqueorderid, :string)
@@ -404,10 +338,10 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule ModifyOrder do
     use Ecto.Schema
     import Ecto.Changeset
-    @derive {Jason.Encoder, only: [:orderid, :uniqueorderid]}
+    @derive Jason.Encoder
 
     @primary_key false
-    schema "modify order response" do
+    embedded_schema do
       field(:orderid, :string)
       field(:uniqueorderid, :string)
     end
@@ -422,10 +356,10 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule CancelOrder do
     use Ecto.Schema
     import Ecto.Changeset
-    @derive {Jason.Encoder, only: [:orderid, :uniqueorderid]}
+    @derive Jason.Encoder
 
     @primary_key false
-    schema "cancel order response" do
+    embedded_schema do
       field(:orderid, :string)
       field(:uniqueorderid, :string)
     end
@@ -440,10 +374,10 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
   defmodule VerifyDis do
     use Ecto.Schema
     import Ecto.Changeset
-    @derive {Jason.Encoder, only: [:ReqId, :ReturnURL, :DPId, :BOID, :TransDtls, :version]}
+    @derive Jason.Encoder
 
     @primary_key false
-    schema "verify dis response" do
+    embedded_schema do
       field(:ReqId, :string)
       field(:ReturnURL, :string)
       field(:DPId, :string)
@@ -463,11 +397,12 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
     use Ecto.Schema
     import Ecto.Changeset
     alias TradeGalleon.Brokers.AngelOne.Responses.EstimateCharges.Breakup
-    @derive {Jason.Encoder, only: [:breakup, :summary, :charges]}
+    @derive Jason.Encoder
 
     @primary_key false
-    schema "estimate charges response" do
+    embedded_schema do
       embeds_many :breakup, Breakup do
+        @derive Jason.Encoder
         field(:name, :string)
         field(:amount, :float)
         field(:msg, :string)
@@ -475,6 +410,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
       end
 
       embeds_one :summary, Summary do
+        @derive Jason.Encoder
         field(:total_charges, :float)
         field(:trade_value, :float)
 
@@ -482,6 +418,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
       end
 
       embeds_many :charges, Charge do
+        @derive Jason.Encoder
         field(:total_charges, :float)
         field(:trade_value, :float)
         embeds_many(:breakup, Breakup)
