@@ -36,7 +36,7 @@ defmodule TradeGalleon.Brokers.AngelOne do
 
   ## Example
 
-  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :login, params: %{"clientcode" => "clientcode", "password" => "1234", "totp" => "123456"})
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :login, params: %{"client_code" => "client_code", "password" => "1234", "totp" => "123456"})
   {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Login{}}}
   """
   def login(opts) do
@@ -52,7 +52,7 @@ defmodule TradeGalleon.Brokers.AngelOne do
 
   Example
 
-  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :logout, params: %{"clientcode" => "client_code"})
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :logout, params: %{"client_code" => "client_code"})
   {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Logout{}}}
   """
   def logout(opts) do
@@ -67,7 +67,7 @@ defmodule TradeGalleon.Brokers.AngelOne do
   Generate Token from AngelOne API
 
   Example
-  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :generate_token, token: "token", params: %{"refreshToken" => "refresh_token"})
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :generate_token, token: "token", params: %{"refresh_token" => "refresh_token"})
   {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.GenerateToken{}}}
   """
   def generate_token(opts) do
@@ -113,7 +113,7 @@ defmodule TradeGalleon.Brokers.AngelOne do
   doc: https://smartapi.angelbroking.com/docs/MarketData
 
   Example
-  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :quote, token: "token", params: %{"mode" => "full", "exchangeTokens" => %{"NSE" => ["22"]}})
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :quote, token: "token", params: %{"mode" => "full", "exchange_tokens" => %{"NSE" => ["22"]}})
   {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Quote{}}}
   """
   def quote(opts) do

@@ -3,12 +3,24 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
     use Ecto.Schema
     import Ecto.Changeset
 
-    @required ~w(clientcode password totp)a
+    defimpl Jason.Encoder, for: __MODULE__ do
+      def encode(struct, opts) do
+        Jason.Encode.map(
+          %{
+            clientcode: struct.client_code,
+            password: struct.password,
+            totp: struct.totp
+          },
+          opts
+        )
+      end
+    end
+
+    @required ~w(client_code password totp)a
     @optional ~w()a
 
-    @primary_key false
-    schema "login params" do
-      field(:clientcode, :string)
+    embedded_schema do
+      field(:client_code, :string)
       field(:password, :string)
       field(:totp, :string)
     end
@@ -25,12 +37,23 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
     use Ecto.Schema
     import Ecto.Changeset
 
-    @required ~w(refreshToken)a
+    defimpl Jason.Encoder, for: __MODULE__ do
+      def encode(struct, opts) do
+        Jason.Encode.map(
+          %{
+            refreshToken: struct.refresh_token
+          },
+          opts
+        )
+      end
+    end
+
+    @required ~w(refresh_token)a
     @optional ~w()a
 
     @primary_key false
-    schema "generate token params" do
-      field(:refreshToken, :string)
+    embedded_schema do
+      field(:refresh_token, :string)
     end
 
     def to_schema(params) do
@@ -45,12 +68,23 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
     use Ecto.Schema
     import Ecto.Changeset
 
-    @required ~w(clientcode)a
+    defimpl Jason.Encoder, for: __MODULE__ do
+      def encode(struct, opts) do
+        Jason.Encode.map(
+          %{
+            clientcode: struct.client_code
+          },
+          opts
+        )
+      end
+    end
+
+    @required ~w(client_code)a
     @optional ~w()a
 
     @primary_key false
-    schema "logout params" do
-      field(:clientcode, :string)
+    embedded_schema do
+      field(:client_code, :string)
     end
 
     def to_schema(params) do
@@ -69,7 +103,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
     @optional ~w()a
 
     @primary_key false
-    schema "profile params" do
+    embedded_schema do
     end
 
     def to_schema(params) do
@@ -88,7 +122,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
     @optional ~w()a
 
     @primary_key false
-    schema "portfolio params" do
+    embedded_schema do
     end
 
     def to_schema(params) do
@@ -103,13 +137,26 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
     use Ecto.Schema
     import Ecto.Changeset
 
-    @required ~w(mode exchangeTokens)a
+    defimpl Jason.Encoder, for: __MODULE__ do
+      def encode(struct, opts) do
+        Jason.Encode.map(
+          struct
+          |> Map.to_list()
+          |> Enum.map(fn {k, v} -> {Macro.camelize(":#{k}"), v} end)
+          |> Enum.into(%{}),
+          opts
+        )
+        |> dbg()
+      end
+    end
+
+    @required ~w(mode exchange_tokens)a
     @optional ~w()a
 
     @primary_key false
-    schema "quote params" do
+    embedded_schema do
       field(:mode, :string)
-      field(:exchangeTokens, :map)
+      field(:exchange_tokens, :map)
     end
 
     def to_schema(params) do
@@ -128,7 +175,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
     @optional ~w()a
 
     @primary_key false
-    schema "candle data params" do
+    embedded_schema do
       field(:exchange, :string)
       field(:symboltoken, :string)
       field(:interval, :string)
@@ -152,7 +199,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
     @optional ~w()a
 
     @primary_key false
-    schema "funds params" do
+    embedded_schema do
     end
 
     def to_schema(params) do
@@ -171,7 +218,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
     @optional ~w()a
 
     @primary_key false
-    schema "order book params" do
+    embedded_schema do
     end
 
     def to_schema(params) do
@@ -190,7 +237,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
     @optional ~w()a
 
     @primary_key false
-    schema "trade book params" do
+    embedded_schema do
     end
 
     def to_schema(params) do
@@ -209,7 +256,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
     @optional ~w()a
 
     @primary_key false
-    schema "search token params" do
+    embedded_schema do
       field(:exchange, :string)
       field(:searchscrip, :string)
     end
@@ -230,7 +277,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
     @optional ~w(triggerprice squareoff stoploss trailingStopLoss disclosedquantity ordertag)a
 
     @primary_key false
-    schema "place order params" do
+    embedded_schema do
       field(:variety, Ecto.Enum, values: [:NORMAL, :STOPLOSS, :AMO, :ROBO])
       field(:tradingsymbol, :string)
       field(:symboltoken, :string)
@@ -293,7 +340,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
     @optional ~w(variety tradingsymbol symboltoken transactiontype ordertype quantity producttype price triggerprice disclosedquantity)a
 
     @primary_key false
-    schema "modify order params" do
+    embedded_schema do
       field(:orderid, :string)
       field(:exchange, Ecto.Enum, values: [:BSE, :NSE, :NFO, :MCX, :BFO, :CDS])
       field(:variety, Ecto.Enum, values: [:NORMAL, :STOPLOSS, :AMO, :ROBO])
@@ -352,7 +399,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
     @optional ~w()a
 
     @primary_key false
-    schema "cancel order params" do
+    embedded_schema do
       field(:variety, Ecto.Enum, values: [:NORMAL, :STOPLOSS, :AMO, :ROBO])
       field(:orderid, :string)
     end
@@ -373,7 +420,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
     @optional ~w()a
 
     @primary_key false
-    schema "order status params" do
+    embedded_schema do
       field(:unique_order_id, :string)
     end
 
@@ -393,7 +440,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
     @optional ~w()a
 
     @primary_key false
-    schema "verify dis params" do
+    embedded_schema do
       field(:isin, :string)
       field(:quantity, :string)
     end
@@ -414,7 +461,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
     @optional ~w()a
 
     @primary_key false
-    schema "estimate charges params" do
+    embedded_schema do
       embeds_many :orders, Order do
         field(:token, :string)
         field(:exchange, Ecto.Enum, values: [:BSE, :NSE, :NFO, :MCX, :BFO, :CDS])
