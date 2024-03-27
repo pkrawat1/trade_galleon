@@ -342,7 +342,7 @@ defmodule TradeGalleon.Brokers.AngelOne do
   end
 
   defp gen_response({:ok, %{body: body} = _env}, _module) do
-    # IO.inspect(_env)
+    IO.inspect(_env)
     {:error, body}
   end
 
@@ -353,8 +353,11 @@ defmodule TradeGalleon.Brokers.AngelOne do
 
   defp validate_request(opts, module) do
     case module.to_schema(opts[:params] || %{}) do
-      {:ok, module_struct} -> Keyword.put(opts, :params, module_struct)
-      {:error, changeset} -> raise Ecto.ChangeError, inspect({:error, changeset.errors})
+      {:ok, module_struct} ->
+        Keyword.put(opts, :params, module_struct |> Jason.encode!() |> Jason.decode!())
+
+      {:error, changeset} ->
+        raise Ecto.ChangeError, inspect({:error, changeset.errors})
     end
   end
 

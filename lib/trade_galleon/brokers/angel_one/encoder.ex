@@ -15,15 +15,15 @@ defmodule Encoder do
             |> Enum.map(fn {k, v} ->
               case unquote(encode_option) do
                 :camel_case ->
-                  {Macro.camelize(":" <> Atom.to_string(k)), v}
+                  {(" " <> Atom.to_string(k)) |> Macro.camelize() |> String.trim(), v}
 
                 :remove_underscore ->
-                  {Macro.underscore(":" <> Atom.to_string(k))
+                  {Macro.underscore(Atom.to_string(k))
                    |> String.replace("_", "")
                    |> String.to_atom(), v}
 
                 :underscore ->
-                  {Macro.underscore(":" <> Atom.to_string(k)), v}
+                  {Macro.underscore(Atom.to_string(k)), v}
 
                 _ ->
                   raise "Invalid encoding option"
