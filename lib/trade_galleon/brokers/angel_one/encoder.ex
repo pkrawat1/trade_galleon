@@ -18,7 +18,8 @@ defmodule Encoder do
                   {(" " <> Atom.to_string(k)) |> Macro.camelize() |> String.trim(), v}
 
                 :remove_underscore ->
-                  {Macro.underscore(Atom.to_string(k))
+                  {k
+                   |> Atom.to_string()
                    |> String.replace("_", "")
                    |> String.to_atom(), v}
 
@@ -35,5 +36,26 @@ defmodule Encoder do
         end
       end
     end
+  end
+
+  def underscore_keys(map, field_mapper \\ fn x -> x end) do
+    map
+    |> Enum.map(fn
+      {k, v} when is_binary(k) ->
+        {k
+         |> Macro.underscore()
+         |> String.trim()
+         |> String.to_atom()
+         |> field_mapper.(), v}
+
+      {k, v} ->
+        {k
+         |> Atom.to_string()
+         |> Macro.underscore()
+         |> String.trim()
+         |> String.to_atom()
+         |> field_mapper.(), v}
+    end)
+    |> Enum.into(%{})
   end
 end

@@ -9,18 +9,15 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
     @derive Jason.Encoder
 
     @primary_key false
-    @field_source_mapper fn
-      :jwtToken -> :jwt_token
-      :refreshToken -> :refresh_token
-      :feedToken -> :feed_token
-    end
     embedded_schema do
-      field(:jwtToken, :string)
-      field(:refreshToken, :string)
-      field(:feedToken, :string)
+      field(:jwt_token, :string)
+      field(:refresh_token, :string)
+      field(:feed_token, :string)
     end
 
     def to_schema(data) do
+      data = Encoder.underscore_keys(data)
+
       %__MODULE__{}
       |> cast(data, __MODULE__.__schema__(:fields))
       |> apply_action(:insert)
@@ -34,12 +31,14 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
 
     @primary_key false
     embedded_schema do
-      field(:jwtToken, :string)
-      field(:refreshToken, :string)
-      field(:feedToken, :string)
+      field(:jwt_token, :string)
+      field(:refresh_token, :string)
+      field(:feed_token, :string)
     end
 
     def to_schema(data) do
+      data = Encoder.underscore_keys(data)
+
       %__MODULE__{}
       |> cast(data, __MODULE__.__schema__(:fields))
       |> apply_action(:insert)
@@ -68,8 +67,9 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
     @derive Jason.Encoder
 
     @primary_key false
+
     embedded_schema do
-      field(:clientcode, :string)
+      field(:client_code, :string)
       field(:name, :string)
       field(:email, :string)
       field(:mobileno, :string)
@@ -77,10 +77,18 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
       field(:broker, :string)
       field(:exchanges, {:array, :string})
       field(:products, {:array, :string})
-      field(:lastlogintime, :string)
+      field(:last_login_time, :string)
     end
 
     def to_schema(data) do
+      data =
+        Encoder.underscore_keys(data, fn
+          :clientcode -> :client_code
+          :mobileno -> :mobile_no
+          :lastlogintime -> :last_login_time
+          x -> x
+        end)
+
       %__MODULE__{}
       |> cast(data, __MODULE__.__schema__(:fields))
       |> apply_action(:insert)
@@ -125,6 +133,21 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
     def to_schema(data), do: to_schema(%{holdings: data})
 
     def holding_changeset(ch, attrs) do
+      attrs =
+        Encoder.underscore_keys(attrs, fn
+          :tradingsymbol -> :trading_symbol
+          :t1quantity -> :t1_quantity
+          :realisedquantity -> :realised_quantity
+          :authorisedquantity -> :authorised_quantity
+          :collateralquantity -> :collateral_quantity
+          :collateraltype -> :collateral_type
+          :averageprice -> :average_price
+          :symboltoken -> :symbol_token
+          :profitandloss -> :profit_and_loss
+          :pnlpercentage -> :pnl_percentage
+          x -> x
+        end)
+
       cast(ch, attrs, __MODULE__.Holding.__schema__(:fields))
     end
   end
@@ -190,6 +213,23 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
     end
 
     def to_schema(data) do
+      data =
+        Encoder.underscore_keys(data, fn
+          :availablecash -> :available_cash
+          :availableintradaypayin -> :available_intraday_payin
+          :availablelimitmargin -> :available_limit_margin
+          :m2mrealized -> :m2m_realized
+          :m2munrealized -> :m2m_unrealized
+          :utiliseddebits -> :utilised_debits
+          :utilisedexposure -> :utilised_exposure
+          :utilisedholdingsales -> :utilised_holding_sales
+          :utilisedoptionpremium -> :utilised_option_premium
+          :utilisedpayout -> :utilised_payout
+          :utilisedspan -> :utilised_span
+          :utilisedturnover -> :utilised_turnover
+          x -> x
+        end)
+
       %__MODULE__{}
       |> cast(data, __MODULE__.__schema__(:fields))
       |> apply_action(:insert)
@@ -204,40 +244,40 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
     @primary_key false
     embedded_schema do
       field(:variety, Ecto.Enum, values: [:NORMAL, :STOPLOSS, :AMO, :ROBO])
-      field(:ordertype, Ecto.Enum, values: [:MARKET, :LIMIT, :STOPLOSS_LIMIT, :STOPLOSS_MARKET])
-      field(:producttype, Ecto.Enum, values: [:INTRADAY, :DELIVERY])
+      field(:order_type, Ecto.Enum, values: [:MARKET, :LIMIT, :SL, :SLM])
+      field(:product_type, Ecto.Enum, values: [:CNC, :MIS, :NRML])
       field(:duration, Ecto.Enum, values: [:DAY, :IOC])
       field(:price, :float)
-      field(:triggerprice, :float)
+      field(:trigger_price, :float)
       field(:quantity, :integer)
-      field(:disclosedquantity, :integer)
+      field(:disclosed_quantity, :integer)
       field(:squareoff, :float)
       field(:stoploss, :float)
-      field(:trailingstoploss, :float)
-      field(:tradingsymbol, :string)
-      field(:transactiontype, Ecto.Enum, values: [:BUY, :SELL])
+      field(:trailing_stoploss, :float)
+      field(:trading_symbol, :string)
+      field(:transaction_type, Ecto.Enum, values: [:BUY, :SELL])
       field(:exchange, Ecto.Enum, values: [:NSE, :BSE, :NFO, :MCX, :BFO, :CDS])
-      field(:symboltoken, :string)
-      field(:instrumenttype, :string)
-      field(:strikeprice, :float)
-      field(:optiontype, :string)
-      field(:expirydate, :string)
-      field(:lotsize, :string)
-      field(:cancelsize, :string)
-      field(:averageprice, :float)
-      field(:filledshares, :integer)
-      field(:unfilledshares, :integer)
-      field(:orderid, :string)
+      field(:symbol_token, :string)
+      field(:instrument_type, :string)
+      field(:strike_price, :float)
+      field(:option_type, :string)
+      field(:expiry_date, :string)
+      field(:lot_size, :string)
+      field(:cancel_size, :string)
+      field(:average_price, :float)
+      field(:filled_shares, :integer)
+      field(:unfilled_shares, :integer)
+      field(:order_id, :string)
       field(:text, :string)
       field(:status, :string)
-      field(:orderstatus, :string)
-      field(:updatetime, :string)
-      field(:exchtime, :string)
-      field(:exchorderupdatetime, :string)
-      field(:fillid, :string)
-      field(:filltime, :string)
-      field(:parentorderid, :string)
-      field(:uniqueorderid, :string)
+      field(:order_status, :string)
+      field(:update_time, :string)
+      field(:exchange_time, :string)
+      field(:exchange_order_update_time, :string)
+      field(:fill_id, :string)
+      field(:fill_time, :string)
+      field(:parent_order_id, :string)
+      field(:unique_order_id, :string)
       field(:ltp, :float)
       field(:ltp_percent, :float)
       field(:close, :float)
@@ -245,11 +285,44 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
       field(:gain_or_loss, :float)
     end
 
+    defp field_mapper do
+      fn
+        :ordertype -> :order_type
+        :producttype -> :product_type
+        :triggerprice -> :trigger_price
+        :disclosedquantity -> :disclosed_quantity
+        :tradingsymbol -> :trading_symbol
+        :transactiontype -> :transaction_type
+        :instrumenttype -> :instrument_type
+        :strikeprice -> :strike_price
+        :optiontype -> :option_type
+        :expirydate -> :expiry_date
+        :lotsize -> :lot_size
+        :cancelsize -> :cancel_size
+        :averageprice -> :average_price
+        :filledshares -> :filled_shares
+        :unfilledshares -> :unfilled_shares
+        :orderid -> :order_id
+        :orderstatus -> :order_status
+        :updatetime -> :update_time
+        :exchtime -> :exchange_time
+        :exchorderupdatetime -> :exchange_order_update_time
+        :fillid -> :fill_id
+        :filltime -> :fill_time
+        :parentorderid -> :parent_order_id
+        :uniqueorderid -> :unique_order_id
+        x -> x
+      end
+    end
+
     def changeset(ch, attrs) do
+      attrs = Encoder.underscore_keys(attrs, field_mapper())
       cast(ch, attrs, __MODULE__.__schema__(:fields))
     end
 
     def to_schema(data) do
+      data = Encoder.underscore_keys(data, field_mapper())
+
       %__MODULE__{}
       |> cast(data, __MODULE__.__schema__(:fields))
       |> apply_action(:insert)
@@ -306,8 +379,8 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
       embeds_many :scrips, Scrip do
         @derive Jason.Encoder
         field(:exchange, :string)
-        field(:tradingsymbol, :string)
-        field(:symboltoken, :string)
+        field(:trading_symbol, :string)
+        field(:symbol_token, :string)
       end
     end
 
@@ -321,6 +394,13 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
     def to_schema(data), do: to_schema(%{scrips: data})
 
     def scrip_changeset(ch, attrs) do
+      attrs =
+        Encoder.underscore_keys(attrs, fn
+          :tradingsymbol -> :trading_symbol
+          :symboltoken -> :symbol_token
+          x -> x
+        end)
+
       cast(ch, attrs, __MODULE__.Scrip.__schema__(:fields))
     end
   end
@@ -333,11 +413,18 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
     @primary_key false
     embedded_schema do
       field(:script, :string)
-      field(:orderid, :string)
-      field(:uniqueorderid, :string)
+      field(:order_id, :string)
+      field(:unique_order_id, :string)
     end
 
     def to_schema(data) do
+      data =
+        Encoder.underscore_keys(data, fn
+          :orderid -> :order_id
+          :uniqueorderid -> :unique_order_id
+          x -> x
+        end)
+
       %__MODULE__{}
       |> cast(data, __MODULE__.__schema__(:fields))
       |> apply_action(:insert)
@@ -351,11 +438,18 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
 
     @primary_key false
     embedded_schema do
-      field(:orderid, :string)
-      field(:uniqueorderid, :string)
+      field(:order_id, :string)
+      field(:unique_order_id, :string)
     end
 
     def to_schema(data) do
+      data =
+        Encoder.underscore_keys(data, fn
+          :orderid -> :order_id
+          :uniqueorderid -> :unique_order_id
+          x -> x
+        end)
+
       %__MODULE__{}
       |> cast(data, __MODULE__.__schema__(:fields))
       |> apply_action(:insert)
@@ -369,11 +463,18 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
 
     @primary_key false
     embedded_schema do
-      field(:orderid, :string)
-      field(:uniqueorderid, :string)
+      field(:order_id, :string)
+      field(:unique_order_id, :string)
     end
 
     def to_schema(data) do
+      data =
+        Encoder.underscore_keys(data, fn
+          :orderid -> :order_id
+          :uniqueorderid -> :unique_order_id
+          x -> x
+        end)
+
       %__MODULE__{}
       |> cast(data, __MODULE__.__schema__(:fields))
       |> apply_action(:insert)
@@ -387,15 +488,17 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
 
     @primary_key false
     embedded_schema do
-      field(:ReqId, :string)
-      field(:ReturnURL, :string)
-      field(:DPId, :string)
-      field(:BOID, :string)
-      field(:TransDtls, :string)
+      field(:req_id, :string)
+      field(:return_url, :string)
+      field(:dp_id, :string)
+      field(:boid, :string)
+      field(:trans_dtls, :string)
       field(:version, :string)
     end
 
     def to_schema(data) do
+      data = Encoder.underscore_keys(data)
+
       %__MODULE__{}
       |> cast(data, __MODULE__.__schema__(:fields))
       |> apply_action(:insert)
