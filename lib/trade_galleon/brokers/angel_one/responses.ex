@@ -104,22 +104,22 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
     embedded_schema do
       embeds_many :holdings, Holding do
         @derive Jason.Encoder
-        field(:tradingsymbol, :string)
+        field(:trading_symbol, :string)
         field(:exchange, :string)
         field(:isin, :string)
-        field(:t1quantity, :integer)
-        field(:realisedquantity, :integer)
+        field(:t1_quantity, :integer)
+        field(:realised_quantity, :integer)
         field(:quantity, :integer)
-        field(:authorisedquantity, :integer)
+        field(:authorised_quantity, :integer)
         field(:product, :string)
-        field(:collateralquantity, :integer)
-        field(:collateraltype, :string)
-        field(:averageprice, :float)
+        field(:collateral_quantity, :integer)
+        field(:collateral_type, :string)
+        field(:average_price, :float)
         field(:ltp, :float)
-        field(:symboltoken, :string)
+        field(:symbol_token, :string)
         field(:close, :float)
-        field(:profitandloss, :float)
-        field(:pnlpercentage, :float)
+        field(:profit_and_loss, :float)
+        field(:pnl_percentage, :float)
       end
     end
 
