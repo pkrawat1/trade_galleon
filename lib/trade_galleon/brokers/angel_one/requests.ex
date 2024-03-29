@@ -66,6 +66,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
   defmodule Profile do
     use Ecto.Schema
     import Ecto.Changeset
+    use Encoder, encode: :underscore
 
     @required ~w()a
     @optional ~w()a
@@ -85,6 +86,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
   defmodule Portfolio do
     use Ecto.Schema
     import Ecto.Changeset
+    use Encoder, encode: :underscore
 
     @required ~w()a
     @optional ~w()a
@@ -151,6 +153,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
   defmodule Funds do
     use Ecto.Schema
     import Ecto.Changeset
+    use Encoder, encode: :underscore
 
     @required ~w()a
     @optional ~w()a
@@ -170,6 +173,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
   defmodule OrderBook do
     use Ecto.Schema
     import Ecto.Changeset
+    use Encoder, encode: :underscore
 
     @required ~w()a
     @optional ~w()a
@@ -189,6 +193,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
   defmodule TradeBook do
     use Ecto.Schema
     import Ecto.Changeset
+    use Encoder, encode: :underscore
 
     @required ~w()a
     @optional ~w()a
@@ -294,6 +299,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
   defmodule ModifyOrder do
     use Ecto.Schema
     import Ecto.Changeset
+    use Encoder, encode: :remove_underscore
 
     @required ~w(order_id exchange)a
     @optional ~w(variety trading_symbol symbol_token transaction_type order_type quantity product_type price trigger_price disclosed_quantity)a

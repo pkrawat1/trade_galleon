@@ -1,10 +1,19 @@
 defmodule TradeGalleon.Brokers.AngelOne.Responses do
+  @moduledoc """
+  This module contains all the response schemas for AngelOne broker.
+  """
+
   defmodule Login do
     use Ecto.Schema
     import Ecto.Changeset
     @derive Jason.Encoder
 
     @primary_key false
+    @field_source_mapper fn
+      :jwtToken -> :jwt_token
+      :refreshToken -> :refresh_token
+      :feedToken -> :feed_token
+    end
     embedded_schema do
       field(:jwtToken, :string)
       field(:refreshToken, :string)
