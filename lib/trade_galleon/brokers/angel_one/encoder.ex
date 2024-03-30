@@ -30,6 +30,7 @@ defmodule Encoder do
                   raise "Invalid encoding option"
               end
             end)
+            |> Enum.filter(fn {_, v} -> not is_nil(v) end)
             |> Enum.into(%{}),
             opts
           )
