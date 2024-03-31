@@ -1,14 +1,14 @@
 defmodule TradeGalleon.Brokers.AngelOne.Requests do
   defmodule Login do
     use Ecto.Schema
+    use Encoder, encode: :remove_underscore
     import Ecto.Changeset
 
-    @required ~w(clientcode password totp)a
+    @required ~w(client_code password totp)a
     @optional ~w()a
 
-    @primary_key false
-    schema "login params" do
-      field(:clientcode, :string)
+    embedded_schema do
+      field(:client_code, :string)
       field(:password, :string)
       field(:totp, :string)
     end
@@ -24,13 +24,14 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
   defmodule GenerateToken do
     use Ecto.Schema
     import Ecto.Changeset
+    use Encoder, encode: :underscore
 
-    @required ~w(refreshToken)a
+    @required ~w(refresh_token)a
     @optional ~w()a
 
     @primary_key false
-    schema "generate token params" do
-      field(:refreshToken, :string)
+    embedded_schema do
+      field(:refresh_token, :string)
     end
 
     def to_schema(params) do
@@ -44,13 +45,14 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
   defmodule Logout do
     use Ecto.Schema
     import Ecto.Changeset
+    use Encoder, encode: :remove_underscore
 
-    @required ~w(clientcode)a
+    @required ~w(client_code)a
     @optional ~w()a
 
     @primary_key false
-    schema "logout params" do
-      field(:clientcode, :string)
+    embedded_schema do
+      field(:client_code, :string)
     end
 
     def to_schema(params) do
@@ -64,12 +66,13 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
   defmodule Profile do
     use Ecto.Schema
     import Ecto.Changeset
+    use Encoder, encode: :underscore
 
     @required ~w()a
     @optional ~w()a
 
     @primary_key false
-    schema "profile params" do
+    embedded_schema do
     end
 
     def to_schema(params) do
@@ -83,12 +86,13 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
   defmodule Portfolio do
     use Ecto.Schema
     import Ecto.Changeset
+    use Encoder, encode: :underscore
 
     @required ~w()a
     @optional ~w()a
 
     @primary_key false
-    schema "portfolio params" do
+    embedded_schema do
     end
 
     def to_schema(params) do
@@ -102,14 +106,15 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
   defmodule Quote do
     use Ecto.Schema
     import Ecto.Changeset
+    use Encoder, encode: :camel_case
 
-    @required ~w(mode exchangeTokens)a
+    @required ~w(mode exchange_tokens)a
     @optional ~w()a
 
     @primary_key false
-    schema "quote params" do
-      field(:mode, :string)
-      field(:exchangeTokens, :map)
+    embedded_schema do
+      field(:mode, Ecto.Enum, values: [:FULL, :LTP, :OHLC])
+      field(:exchange_tokens, :map)
     end
 
     def to_schema(params) do
@@ -122,18 +127,19 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
 
   defmodule CandleData do
     use Ecto.Schema
+    use Encoder, encode: :remove_underscore
     import Ecto.Changeset
 
-    @required ~w(exchange symboltoken interval fromdate todate)a
+    @required ~w(exchange symbol_token interval from_date to_date)a
     @optional ~w()a
 
     @primary_key false
-    schema "candle data params" do
+    embedded_schema do
       field(:exchange, :string)
-      field(:symboltoken, :string)
+      field(:symbol_token, :string)
       field(:interval, :string)
-      field(:fromdate, :string)
-      field(:todate, :string)
+      field(:from_date, :string)
+      field(:to_date, :string)
     end
 
     def to_schema(params) do
@@ -147,12 +153,13 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
   defmodule Funds do
     use Ecto.Schema
     import Ecto.Changeset
+    use Encoder, encode: :underscore
 
     @required ~w()a
     @optional ~w()a
 
     @primary_key false
-    schema "funds params" do
+    embedded_schema do
     end
 
     def to_schema(params) do
@@ -166,12 +173,13 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
   defmodule OrderBook do
     use Ecto.Schema
     import Ecto.Changeset
+    use Encoder, encode: :underscore
 
     @required ~w()a
     @optional ~w()a
 
     @primary_key false
-    schema "order book params" do
+    embedded_schema do
     end
 
     def to_schema(params) do
@@ -185,12 +193,13 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
   defmodule TradeBook do
     use Ecto.Schema
     import Ecto.Changeset
+    use Encoder, encode: :underscore
 
     @required ~w()a
     @optional ~w()a
 
     @primary_key false
-    schema "trade book params" do
+    embedded_schema do
     end
 
     def to_schema(params) do
@@ -203,15 +212,16 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
 
   defmodule SearchToken do
     use Ecto.Schema
+    use Encoder, encode: :remove_underscore
     import Ecto.Changeset
 
-    @required ~w(exchange searchscrip)a
+    @required ~w(exchange search_scrip)a
     @optional ~w()a
 
     @primary_key false
-    schema "search token params" do
+    embedded_schema do
       field(:exchange, :string)
-      field(:searchscrip, :string)
+      field(:search_scrip, :string)
     end
 
     def to_schema(params) do
@@ -224,29 +234,30 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
 
   defmodule PlaceOrder do
     use Ecto.Schema
+    use Encoder, encode: :remove_underscore
     import Ecto.Changeset
 
-    @required ~w(variety tradingsymbol symboltoken exchange transactiontype ordertype quantity producttype price duration)a
-    @optional ~w(triggerprice squareoff stoploss trailingStopLoss disclosedquantity ordertag)a
+    @required ~w(variety trading_symbol symbol_token exchange transaction_type order_type quantity product_type price duration)a
+    @optional ~w(trigger_price square_off stoploss trailing_stoploss disclosed_quantity order_tag)a
 
     @primary_key false
-    schema "place order params" do
+    embedded_schema do
       field(:variety, Ecto.Enum, values: [:NORMAL, :STOPLOSS, :AMO, :ROBO])
-      field(:tradingsymbol, :string)
-      field(:symboltoken, :string)
+      field(:trading_symbol, :string)
+      field(:symbol_token, :string)
       field(:exchange, Ecto.Enum, values: [:BSE, :NSE, :NFO, :MCX, :BFO, :CDS])
-      field(:transactiontype, Ecto.Enum, values: [:BUY, :SELL])
-      field(:ordertype, Ecto.Enum, values: [:MARKET, :LIMIT, :STOPLOSS_LIMIT, :STOPLOSS_MARKET])
+      field(:transaction_type, Ecto.Enum, values: [:BUY, :SELL])
+      field(:order_type, Ecto.Enum, values: [:MARKET, :LIMIT, :STOPLOSS_LIMIT, :STOPLOSS_MARKET])
       field(:quantity, :string)
-      field(:producttype, Ecto.Enum, values: [:DELIVERY, :CARRYFORWARD, :MARGIN, :INTRADAY, :BO])
+      field(:product_type, Ecto.Enum, values: [:DELIVERY, :CARRYFORWARD, :MARGIN, :INTRADAY, :BO])
       field(:price, :string)
-      field(:triggerprice, :string)
-      field(:squareoff, :string)
+      field(:trigger_price, :string)
+      field(:square_off, :string)
       field(:stoploss, :string)
-      field(:trailingStopLoss, :string)
-      field(:disclosedquantity, :string)
+      field(:trailing_stoploss, :string)
+      field(:disclosed_quantity, :string)
       field(:duration, Ecto.Enum, values: [:DAY, :IOC])
-      field(:ordertag, :string)
+      field(:order_tag, :string)
     end
 
     def to_schema(params) do
@@ -260,7 +271,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
     end
 
     defp validate_market_order(ch) do
-      if get_field(ch, :ordertype) == :MARKET do
+      if get_field(ch, :order_type) == :MARKET do
         put_change(ch, :price, 0)
       else
         ch
@@ -268,9 +279,9 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
     end
 
     defp validate_stoploss_order(ch) do
-      if get_field(ch, :ordertype) == :STOPLOSS_LIMIT ||
-           get_field(ch, :ordertype) == :STOPLOSS_MARKET do
-        validate_required(ch, [:triggerprice])
+      if get_field(ch, :order_type) == :STOPLOSS_LIMIT ||
+           get_field(ch, :order_type) == :STOPLOSS_MARKET do
+        validate_required(ch, [:trigger_price])
       else
         ch
       end
@@ -278,7 +289,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
 
     defp validate_robo_order(ch) do
       if get_field(ch, :variety) == :ROBO do
-        validate_required(ch, [:squareoff, :stoploss, :trailingStopLoss])
+        validate_required(ch, [:square_off, :stoploss, :trailing_stoploss])
       else
         ch
       end
@@ -288,24 +299,25 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
   defmodule ModifyOrder do
     use Ecto.Schema
     import Ecto.Changeset
+    use Encoder, encode: :remove_underscore
 
-    @required ~w(orderid exchange)a
-    @optional ~w(variety tradingsymbol symboltoken transactiontype ordertype quantity producttype price triggerprice disclosedquantity)a
+    @required ~w(order_id exchange)a
+    @optional ~w(variety trading_symbol symbol_token transaction_type order_type quantity product_type price trigger_price disclosed_quantity)a
 
     @primary_key false
-    schema "modify order params" do
-      field(:orderid, :string)
+    embedded_schema do
+      field(:order_id, :string)
       field(:exchange, Ecto.Enum, values: [:BSE, :NSE, :NFO, :MCX, :BFO, :CDS])
       field(:variety, Ecto.Enum, values: [:NORMAL, :STOPLOSS, :AMO, :ROBO])
-      field(:tradingsymbol, :string)
-      field(:symboltoken, :string)
-      field(:transactiontype, Ecto.Enum, values: [:BUY, :SELL])
-      field(:ordertype, Ecto.Enum, values: [:MARKET, :LIMIT, :STOPLOSS_LIMIT, :STOPLOSS_MARKET])
+      field(:trading_symbol, :string)
+      field(:symbol_token, :string)
+      field(:transaction_type, Ecto.Enum, values: [:BUY, :SELL])
+      field(:order_type, Ecto.Enum, values: [:MARKET, :LIMIT, :STOPLOSS_LIMIT, :STOPLOSS_MARKET])
       field(:quantity, :string)
-      field(:producttype, Ecto.Enum, values: [:DELIVERY, :CARRYFORWARD, :MARGIN, :INTRADAY, :BO])
+      field(:product_type, Ecto.Enum, values: [:DELIVERY, :CARRYFORWARD, :MARGIN, :INTRADAY, :BO])
       field(:price, :string)
-      field(:triggerprice, :string)
-      field(:disclosedquantity, :string)
+      field(:trigger_price, :string)
+      field(:disclosed_quantity, :string)
     end
 
     def to_schema(params) do
@@ -319,7 +331,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
     end
 
     defp validate_market_order(ch) do
-      if get_field(ch, :ordertype) == :MARKET do
+      if get_field(ch, :order_type) == :MARKET do
         put_change(ch, :price, 0)
       else
         ch
@@ -327,9 +339,9 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
     end
 
     defp validate_stoploss_order(ch) do
-      if get_field(ch, :ordertype) == :STOPLOSS_LIMIT ||
-           get_field(ch, :ordertype) == :STOPLOSS_MARKET do
-        validate_required(ch, [:triggerprice])
+      if get_field(ch, :order_type) == :STOPLOSS_LIMIT ||
+           get_field(ch, :order_type) == :STOPLOSS_MARKET do
+        validate_required(ch, [:trigger_price])
       else
         ch
       end
@@ -337,7 +349,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
 
     defp validate_robo_order(ch) do
       if get_field(ch, :variety) == :ROBO do
-        validate_required(ch, [:squareoff, :stoploss, :trailingStopLoss])
+        validate_required(ch, [:square_off, :stoploss, :trailing_stoploss])
       else
         ch
       end
@@ -346,15 +358,16 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
 
   defmodule CancelOrder do
     use Ecto.Schema
+    use Encoder, encode: :remove_underscore
     import Ecto.Changeset
 
-    @required ~w(orderid variety)a
+    @required ~w(order_id variety)a
     @optional ~w()a
 
     @primary_key false
-    schema "cancel order params" do
+    embedded_schema do
       field(:variety, Ecto.Enum, values: [:NORMAL, :STOPLOSS, :AMO, :ROBO])
-      field(:orderid, :string)
+      field(:order_id, :string)
     end
 
     def to_schema(params) do
@@ -367,13 +380,14 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
 
   defmodule OrderStatus do
     use Ecto.Schema
+    use Encoder, encode: :remove_underscore
     import Ecto.Changeset
 
     @required ~w(unique_order_id)a
     @optional ~w()a
 
     @primary_key false
-    schema "order status params" do
+    embedded_schema do
       field(:unique_order_id, :string)
     end
 
@@ -387,13 +401,14 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
 
   defmodule VerifyDis do
     use Ecto.Schema
+    use Encoder, encode: :remove_underscore
     import Ecto.Changeset
 
     @required ~w(isin quantity)a
     @optional ~w()a
 
     @primary_key false
-    schema "verify dis params" do
+    embedded_schema do
       field(:isin, :string)
       field(:quantity, :string)
     end
@@ -406,39 +421,47 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
     end
   end
 
+  defmodule EstimateCharges.Order do
+    use Ecto.Schema
+    use Encoder, encode: :underscore
+    import Ecto.Changeset
+
+    @primary_key false
+    embedded_schema do
+      field(:token, :string)
+      field(:exchange, Ecto.Enum, values: [:BSE, :NSE, :NFO, :MCX, :BFO, :CDS])
+      field(:transaction_type, Ecto.Enum, values: [:BUY, :SELL])
+      field(:quantity, :integer)
+      field(:product_type, Ecto.Enum, values: [:DELIVERY, :CARRYFORWARD, :MARGIN, :INTRADAY, :BO])
+      field(:price, :decimal)
+    end
+
+    def changeset(ch, params) do
+      ch
+      |> cast(params, __MODULE__.__schema__(:fields))
+      |> validate_required(__MODULE__.__schema__(:fields))
+    end
+  end
+
   defmodule EstimateCharges do
     use Ecto.Schema
+    use Encoder, encode: :underscore
     import Ecto.Changeset
 
     @required ~w()a
     @optional ~w()a
 
     @primary_key false
-    schema "estimate charges params" do
-      embeds_many :orders, Order do
-        field(:token, :string)
-        field(:exchange, Ecto.Enum, values: [:BSE, :NSE, :NFO, :MCX, :BFO, :CDS])
-        field(:transaction_type, Ecto.Enum, values: [:BUY, :SELL])
-        field(:quantity, :integer)
-
-        field(:product_type, Ecto.Enum,
-          values: [:DELIVERY, :CARRYFORWARD, :MARGIN, :INTRADAY, :BO]
-        )
-
-        field(:price, :decimal)
-      end
+    embedded_schema do
+      embeds_many(:orders, __MODULE__.Order)
     end
 
     def to_schema(params) do
       %__MODULE__{}
       |> cast(params, @required ++ @optional)
       |> validate_required(@required)
-      |> cast_embed(:orders, with: &order_changeset/2)
+      |> cast_embed(:orders)
       |> apply_action(:insert)
-    end
-
-    def order_changeset(ch, params) do
-      cast(ch, params, __MODULE__.Order.__schema__(:fields))
     end
   end
 end

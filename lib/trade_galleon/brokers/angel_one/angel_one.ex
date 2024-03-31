@@ -36,12 +36,13 @@ defmodule TradeGalleon.Brokers.AngelOne do
 
   ## Example
 
-  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :login, params: %{"clientcode" => "clientcode", "password" => "1234", "totp" => "123456"})
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :login, params: %{"client_code" => "client_code", "password" => "1234", "totp" => "123456"})
   {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Login{}}}
   """
   def login(opts) do
+    opts = validate_request(opts, Requests.Login)
+
     opts
-    |> validate_request(Requests.Login)
     |> client()
     |> post(@routes.login, opts[:params])
     |> gen_response(Responses.Login)
@@ -52,12 +53,13 @@ defmodule TradeGalleon.Brokers.AngelOne do
 
   Example
 
-  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :logout, params: %{"clientcode" => "client_code"})
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :logout, params: %{"client_code" => "client_code"})
   {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Logout{}}}
   """
   def logout(opts) do
+    opts = validate_request(opts, Requests.Logout)
+
     opts
-    |> validate_request(Requests.Logout)
     |> client()
     |> post(@routes.logout, opts[:params])
     |> gen_response(Responses.Logout)
@@ -67,12 +69,13 @@ defmodule TradeGalleon.Brokers.AngelOne do
   Generate Token from AngelOne API
 
   Example
-  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :generate_token, token: "token", params: %{"refreshToken" => "refresh_token"})
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :generate_token, token: "token", params: %{"refresh_token" => "refresh_token"})
   {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.GenerateToken{}}}
   """
   def generate_token(opts) do
+    opts = validate_request(opts, Requests.GenerateToken)
+
     opts
-    |> validate_request(Requests.GenerateToken)
     |> client()
     |> post(@routes.generate_token, opts[:params])
     |> gen_response(Responses.GenerateToken)
@@ -86,8 +89,9 @@ defmodule TradeGalleon.Brokers.AngelOne do
   {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Profile{}}}
   """
   def profile(opts) do
+    opts = validate_request(opts, Requests.Profile)
+
     opts
-    |> validate_request(Requests.Profile)
     |> client()
     |> get(@routes.profile)
     |> gen_response(Responses.Profile)
@@ -101,8 +105,9 @@ defmodule TradeGalleon.Brokers.AngelOne do
   {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Portfolio{}}}
   """
   def portfolio(opts) do
+    opts = validate_request(opts, Requests.Portfolio)
+
     opts
-    |> validate_request(Requests.Portfolio)
     |> client()
     |> get(@routes.portfolio)
     |> gen_response(Responses.Portfolio)
@@ -113,12 +118,13 @@ defmodule TradeGalleon.Brokers.AngelOne do
   doc: https://smartapi.angelbroking.com/docs/MarketData
 
   Example
-  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :quote, token: "token", params: %{"mode" => "full", "exchangeTokens" => %{"NSE" => ["22"]}})
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :quote, token: "token", params: %{"mode" => "FULL", "exchange_tokens" => %{"NSE" => ["22"]}})
   {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Quote{}}}
   """
   def quote(opts) do
+    opts = validate_request(opts, Requests.Quote)
+
     opts
-    |> validate_request(Requests.Quote)
     |> client()
     |> post(@routes.quote, opts[:params])
     |> gen_response(Responses.Quote)
@@ -129,12 +135,13 @@ defmodule TradeGalleon.Brokers.AngelOne do
   doc: https://smartapi.angelbroking.com/docs/Historical
 
   Example
-  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :candle_data, token: "token", params: %{"exchange" => "NSE", "symboltoken" => "22", "interval" => "ONE_MINUTE", "fromdate" => "2021-01-01 11:15", "todate" => "2021-01-01 15:30"})
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :candle_data, token: "token", params: %{"exchange" => "NSE", "symbol_token" => "22", "interval" => "ONE_MINUTE", "from_date" => "2021-01-01 11:15", "to_date" => "2021-01-01 15:30"})
   {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.CandleData{}}}
   """
   def candle_data(opts) do
+    opts = validate_request(opts, Requests.CandleData)
+
     opts
-    |> validate_request(Requests.CandleData)
     |> client()
     |> post(@routes.candle_data, opts[:params])
     |> gen_response(Responses.CandleData)
@@ -148,8 +155,9 @@ defmodule TradeGalleon.Brokers.AngelOne do
   {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Funds{}}}
   """
   def funds(opts) do
+    opts = validate_request(opts, Requests.Funds)
+
     opts
-    |> validate_request(Requests.Funds)
     |> client()
     |> get(@routes.funds)
     |> gen_response(Responses.Funds)
@@ -163,8 +171,9 @@ defmodule TradeGalleon.Brokers.AngelOne do
   {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.OrderBook{}}}
   """
   def order_book(opts) do
+    opts = validate_request(opts, Requests.OrderBook)
+
     opts
-    |> validate_request(Requests.OrderBook)
     |> client()
     |> get(@routes.order_book)
     |> gen_response(Responses.OrderBook)
@@ -178,8 +187,9 @@ defmodule TradeGalleon.Brokers.AngelOne do
   {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.TradeBook{}}}
   """
   def trade_book(opts) do
+    opts = validate_request(opts, Requests.TradeBook)
+
     opts
-    |> validate_request(Requests.TradeBook)
     |> client()
     |> get(@routes.trade_book)
     |> gen_response(Responses.TradeBook)
@@ -189,12 +199,13 @@ defmodule TradeGalleon.Brokers.AngelOne do
   Search Token from AngelOne API
 
   Example
-  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :search_token, token: "token", params: %{"exchange" => "NSE", "searchscrip" => "SBIN"})
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :search_token, token: "token", params: %{"exchange" => "NSE", "search_scrip" => "SBIN"})
   {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.SearchToken{}}}
   """
   def search_token(opts) do
+    opts = validate_request(opts, Requests.SearchToken)
+
     opts
-    |> validate_request(Requests.SearchToken)
     |> client()
     |> post(@routes.search_token, opts[:params])
     |> gen_response(Responses.SearchToken)
@@ -205,14 +216,15 @@ defmodule TradeGalleon.Brokers.AngelOne do
   doc: https://smartapi.angelbroking.com/docs/Orders#place
 
   Example
-  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :place_order, token: "token", params: %{"variety" => "NORMAL", "tradingsymbol" => "SBIN-EQ", "symboltoken" => "3045", "transactiontype" => "BUY", "exchange" => "NSE", "ordertype" => "LIMIT", "producttype" => "INTRADAY", "duration" => "DAY", "price" => "200", "quantity" => "1"})
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :place_order, token: "token", params: %{"variety" => "NORMAL", "trading_symbol" => "SBIN-EQ", "symbol_token" => "3045", "transaction_type" => "BUY", "exchange" => "NSE", "order_type" => "LIMIT", "product_type" => "INTRADAY", "duration" => "DAY", "price" => "200", "quantity" => "1"})
   {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.PlaceOrder{}}}
-  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :place_order, token: "token", params: %{"variety" => "NORMAL", "tradingsymbol" => "SBIN-EQ", "symboltoken" => "3045", "transactiontype" => "BUY", "exchange" => "NSE", "ordertype" => "STOPLOSS_LIMIT", "triggerprice" => "200", "producttype" => "INTRADAY", "duration" => "DAY", "price" => "200", "quantity" => "1"})
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :place_order, token: "token", params: %{"variety" => "NORMAL", "trading_symbol" => "SBIN-EQ", "symbol_token" => "3045", "transaction_type" => "BUY", "exchange" => "NSE", "order_type" => "STOPLOSS_LIMIT", "trigger_price" => "200", "product_type" => "INTRADAY", "duration" => "DAY", "price" => "200", "quantity" => "1"})
   {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.PlaceOrder{}}}
   """
   def place_order(opts) do
+    opts = validate_request(opts, Requests.PlaceOrder)
+
     opts
-    |> validate_request(Requests.PlaceOrder)
     |> client()
     |> post(@routes.place_order, opts[:params])
     |> gen_response(Responses.PlaceOrder)
@@ -223,12 +235,13 @@ defmodule TradeGalleon.Brokers.AngelOne do
   doc: https://smartapi.angelbroking.com/docs/Orders#modifyorder
 
   Example
-  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :modify_order, token: "token", params: %{"variety" => "NORMAL", "orderid" => "orderid", "transactiontype" => "BUY", "exchange" => "NSE", "ordertype" => "LIMIT", "producttype" => "INTRADAY", "duration" => "DAY", "price" => "200", "quantity" => "1"})
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :modify_order, token: "token", params: %{"variety" => "NORMAL", "order_id" => "order_id", "transaction_type" => "BUY", "exchange" => "NSE", "order_type" => "LIMIT", "product_type" => "INTRADAY", "duration" => "DAY", "price" => "200", "quantity" => "1"})
   {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.ModifyOrder{}}}
   """
   def modify_order(opts) do
+    opts = validate_request(opts, Requests.ModifyOrder)
+
     opts
-    |> validate_request(Requests.ModifyOrder)
     |> client()
     |> post(@routes.modify_order, opts[:params])
     |> gen_response(Responses.ModifyOrder)
@@ -239,12 +252,13 @@ defmodule TradeGalleon.Brokers.AngelOne do
   doc: https://smartapi.angelbroking.com/docs/Orders#cancelorder
 
   Example
-  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :cancel_order, token: "token", params: %{"variety" => "NORMAL", "orderid" => "orderid"})
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :cancel_order, token: "token", params: %{"variety" => "NORMAL", "order_id" => "order_id"})
   {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.CancelOrder{}}}
   """
   def cancel_order(opts) do
+    opts = validate_request(opts, Requests.CancelOrder)
+
     opts
-    |> validate_request(Requests.CancelOrder)
     |> client()
     |> post(@routes.cancel_order, opts[:params])
     |> gen_response(Responses.CancelOrder)
@@ -255,14 +269,15 @@ defmodule TradeGalleon.Brokers.AngelOne do
   doc: https://smartapi.angelbroking.com/docs/Orders#indorder
 
   Example
-  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :order_status, token: "token", params: %{"unique_order_id" => "uniqueorderid"})
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :order_status, token: "token", params: %{"unique_order_id" => "uniqueorder_id"})
   {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.OrderStatus{}}}
   """
   def order_status(opts) do
+    opts = validate_request(opts, Requests.OrderStatus)
+
     opts
-    |> validate_request(Requests.OrderStatus)
     |> client()
-    |> get(@routes.order_status <> "/" <> opts[:params]["unique_order_id"])
+    |> get(@routes.order_status, query: opts[:params])
     |> gen_response(Responses.OrderStatus)
   end
 
@@ -274,8 +289,9 @@ defmodule TradeGalleon.Brokers.AngelOne do
   {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.VerifyDis{}}}
   """
   def verify_dis(opts) do
+    opts = validate_request(opts, Requests.VerifyDis)
+
     opts
-    |> validate_request(Requests.VerifyDis)
     |> client()
     |> post(@routes.verify_dis, opts[:params])
     |> gen_response(Responses.VerifyDis)
@@ -289,8 +305,9 @@ defmodule TradeGalleon.Brokers.AngelOne do
   {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.EstimateCharges{}}}
   """
   def estimate_charges(opts) do
+    opts = validate_request(opts, Requests.EstimateCharges)
+
     opts
-    |> validate_request(Requests.EstimateCharges)
     |> client()
     |> post(@routes.estimate_charges, opts[:params])
     |> gen_response(Responses.EstimateCharges)
@@ -321,6 +338,7 @@ defmodule TradeGalleon.Brokers.AngelOne do
     middleware = [
       {Tesla.Middleware.BaseUrl, @base_url},
       Tesla.Middleware.JSON,
+      # Tesla.Middleware.Logger,
       {Tesla.Middleware.Headers, headers},
       {Tesla.Middleware.Retry,
        delay: 1000,
@@ -342,7 +360,6 @@ defmodule TradeGalleon.Brokers.AngelOne do
   end
 
   defp gen_response({:ok, %{body: body} = _env}, _module) do
-    # IO.inspect(_env)
     {:error, body}
   end
 
@@ -353,8 +370,11 @@ defmodule TradeGalleon.Brokers.AngelOne do
 
   defp validate_request(opts, module) do
     case module.to_schema(opts[:params] || %{}) do
-      {:ok, module_struct} -> Keyword.put(opts, :params, module_struct)
-      {:error, changeset} -> raise Ecto.ChangeError, inspect({:error, changeset.errors})
+      {:ok, module_struct} ->
+        Keyword.put(opts, :params, module_struct |> Jason.encode!() |> Jason.decode!())
+
+      {:error, changeset} ->
+        raise Ecto.ChangeError, inspect({:error, changeset.errors})
     end
   end
 
