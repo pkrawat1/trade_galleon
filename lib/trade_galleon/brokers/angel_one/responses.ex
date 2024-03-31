@@ -191,12 +191,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
           field(:orders, :integer)
         end
 
-        embeds_many :sell, Order do
-          @derive Jason.Encoder
-          field(:price, :float)
-          field(:quantity, :integer)
-          field(:orders, :integer)
-        end
+        embeds_many(:sell, __MODULE__.Order)
       end
 
       field(:message, :string)

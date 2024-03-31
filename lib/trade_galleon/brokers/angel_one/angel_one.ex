@@ -338,7 +338,7 @@ defmodule TradeGalleon.Brokers.AngelOne do
     middleware = [
       {Tesla.Middleware.BaseUrl, @base_url},
       Tesla.Middleware.JSON,
-      Tesla.Middleware.Logger,
+      # Tesla.Middleware.Logger,
       {Tesla.Middleware.Headers, headers},
       {Tesla.Middleware.Retry,
        delay: 1000,
