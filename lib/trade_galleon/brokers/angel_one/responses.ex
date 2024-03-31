@@ -152,6 +152,96 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
     end
   end
 
+  defmodule Quote.Data do
+    use Ecto.Schema
+    import Ecto.Changeset
+    @derive Jason.Encoder
+
+    @primary_key false
+    embedded_schema do
+      field(:exchange, :string)
+      field(:trading_symbol, :string)
+      field(:symbol_token, :string)
+      field(:ltp, :float)
+      field(:open, :float)
+      field(:high, :float)
+      field(:low, :float)
+      field(:close, :float)
+      field(:last_trade_qty, :integer)
+      field(:exch_feed_time, :string)
+      field(:exch_trade_time, :string)
+      field(:net_change, :float)
+      field(:percent_change, :float)
+      field(:avg_price, :float)
+      field(:trade_volume, :integer)
+      field(:opn_interest, :integer)
+      field(:lower_circuit, :float)
+      field(:upper_circuit, :float)
+      field(:tot_buy_quan, :integer)
+      field(:tot_sell_quan, :integer)
+      field(:"52_week_low", :float)
+      field(:"52_week_high", :float)
+
+      embeds_one :depth, Depth do
+        @derive Jason.Encoder
+        embeds_many :buy, Order do
+          @derive Jason.Encoder
+          field(:price, :float)
+          field(:quantity, :integer)
+          field(:orders, :integer)
+        end
+
+        embeds_many :sell, Order do
+          @derive Jason.Encoder
+          field(:price, :float)
+          field(:quantity, :integer)
+          field(:orders, :integer)
+        end
+      end
+
+      field(:message, :string)
+      field(:error_code, :string)
+    end
+
+    def changeset(ch, attrs) do
+      attrs =
+        Encoder.underscore_keys(attrs, fn
+          :tradingsymbol -> :trading_symbol
+          :symboltoken -> :symbol_token
+          :lasttradeqty -> :last_trade_qty
+          :exchfeedtime -> :exch_feed_time
+          :exchtradetime -> :exch_trade_time
+          :netchange -> :net_change
+          :percentchange -> :percent_change
+          :avgprice -> :avg_price
+          :tradevolume -> :trade_volume
+          :opninterest -> :opn_interest
+          :lowercircuit -> :lower_circuit
+          :uppercircuit -> :upper_circuit
+          :totbuyquan -> :tot_buy_quan
+          :totsellquan -> :tot_sell_quan
+          :"52weeklow" -> :"52_week_low"
+          :"52weekhigh" -> :"52_week_high"
+          x -> x
+        end)
+
+      ch
+      |> cast(attrs, __MODULE__.__schema__(:fields) -- [:depth])
+      |> cast_embed(:depth, with: &depth_changeset/2)
+    end
+
+    def depth_changeset(ch, attrs) do
+      ch
+      |> cast(attrs, __MODULE__.Depth.__schema__(:fields) -- [:buy, :sell])
+      |> cast_embed(:buy, with: &order_changeset/2)
+      |> cast_embed(:sell, with: &order_changeset/2)
+    end
+
+    def order_changeset(ch, attrs) do
+      cast(ch, attrs, __MODULE__.Depth.Order.__schema__(:fields))
+    end
+  end
+
   defmodule Quote do
     use Ecto.Schema
     import Ecto.Changeset
@@ -159,12 +249,15 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
 
     @primary_key false
     embedded_schema do
-      field(:fetched, {:array, :map})
+      embeds_many(:fetched, __MODULE__.Data)
+      embeds_many(:unfetched, __MODULE__.Data)
     end
 
     def to_schema(data) do
       %__MODULE__{}
-      |> cast(data, __MODULE__.__schema__(:fields))
+      |> cast(data, __MODULE__.__schema__(:fields) -- [:fetched, :unfetched])
+      |> cast_embed(:fetched)
+      |> cast_embed(:unfetched)
       |> apply_action(:insert)
     end
   end
@@ -245,7 +338,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
     embedded_schema do
       field(:variety, Ecto.Enum, values: [:NORMAL, :STOPLOSS, :AMO, :ROBO])
       field(:order_type, Ecto.Enum, values: [:MARKET, :LIMIT, :SL, :SLM])
-      field(:product_type, Ecto.Enum, values: [:CNC, :MIS, :NRML])
+      field(:product_type, Ecto.Enum, values: [:DELIVERY, :CARRYFORWARD, :MARGIN, :INTRADAY, :BO])
       field(:duration, Ecto.Enum, values: [:DAY, :IOC])
       field(:price, :float)
       field(:trigger_price, :float)
@@ -292,6 +385,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
         :triggerprice -> :trigger_price
         :disclosedquantity -> :disclosed_quantity
         :tradingsymbol -> :trading_symbol
+        :symboltoken -> :symbol_token
         :transactiontype -> :transaction_type
         :instrumenttype -> :instrument_type
         :strikeprice -> :strike_price

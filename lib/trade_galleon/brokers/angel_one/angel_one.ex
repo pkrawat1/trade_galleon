@@ -118,7 +118,7 @@ defmodule TradeGalleon.Brokers.AngelOne do
   doc: https://smartapi.angelbroking.com/docs/MarketData
 
   Example
-  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :quote, token: "token", params: %{"mode" => "full", "exchange_tokens" => %{"NSE" => ["22"]}})
+  iex> TradeGalleon.call(TradeGalleon.Brokers.AngelOne, :quote, token: "token", params: %{"mode" => "FULL", "exchange_tokens" => %{"NSE" => ["22"]}})
   {:ok, %{"message" => "SUCCESS", "data" => %TradeGalleon.Brokers.AngelOne.Responses.Quote{}}}
   """
   def quote(opts) do

@@ -113,7 +113,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
 
     @primary_key false
     embedded_schema do
-      field(:mode, :string)
+      field(:mode, Ecto.Enum, values: [:FULL, :LTP, :OHLC])
       field(:exchange_tokens, :map)
     end
 
