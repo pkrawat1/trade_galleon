@@ -370,7 +370,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
       field(:ltp_percent, :float)
       field(:close, :float)
       field(:is_gain_today?, :boolean)
-      field(:gain_or_loss, :float)
+      field(:gains_or_loss, :float)
     end
 
     defp field_mapper do
