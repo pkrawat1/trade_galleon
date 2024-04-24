@@ -302,7 +302,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
     use Encoder, encode: :remove_underscore
 
     @required ~w(order_id exchange)a
-    @optional ~w(variety trading_symbol symbol_token transaction_type order_type quantity product_type price trigger_price disclosed_quantity)a
+    @optional ~w(variety trading_symbol symbol_token transaction_type order_type quantity product_type price trigger_price disclosed_quantity duration)a
 
     @primary_key false
     embedded_schema do
@@ -317,6 +317,7 @@ defmodule TradeGalleon.Brokers.AngelOne.Requests do
       field(:product_type, Ecto.Enum, values: [:DELIVERY, :CARRYFORWARD, :MARGIN, :INTRADAY, :BO])
       field(:price, :string)
       field(:trigger_price, :string)
+      field(:duration, Ecto.Enum, values: [:DAY, :IOC])
       field(:disclosed_quantity, :string)
     end
 

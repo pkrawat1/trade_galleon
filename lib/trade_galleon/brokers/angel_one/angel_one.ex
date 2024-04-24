@@ -277,7 +277,7 @@ defmodule TradeGalleon.Brokers.AngelOne do
 
     opts
     |> client()
-    |> get(@routes.order_status, query: opts[:params])
+    |> get(@routes.order_status <> "/" <> opts[:params]["uniqueorderid"])
     |> gen_response(Responses.OrderStatus)
   end
 
