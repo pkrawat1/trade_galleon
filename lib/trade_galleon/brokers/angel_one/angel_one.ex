@@ -368,6 +368,8 @@ defmodule TradeGalleon.Brokers.AngelOne do
 
   defp gen_response({:error, %{body: body}}, _module), do: {:error, body}
 
+  defp gen_response({:error, error}, _module), do: {:error, %{"message" => "#{inspect(error)}"}}
+
   defp validate_request(opts, module) do
     case module.to_schema(opts[:params] || %{}) do
       {:ok, module_struct} ->
