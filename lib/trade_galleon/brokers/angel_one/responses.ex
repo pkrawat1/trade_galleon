@@ -647,6 +647,12 @@ defmodule TradeGalleon.Brokers.AngelOne.Responses do
     end
 
     def breakup_changeset(ch, attrs) do
+      attrs =
+        Map.update(attrs, "breakup", [], fn
+          nil -> []
+          value -> value
+        end)
+
       ch
       |> cast(attrs, Breakup.__schema__(:fields) -- [:breakup])
       |> cast_embed(:breakup, with: &breakup_changeset/2)

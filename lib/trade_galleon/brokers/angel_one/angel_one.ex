@@ -382,8 +382,11 @@ defmodule TradeGalleon.Brokers.AngelOne do
 
   defp validate_response(response, module) do
     case module.to_schema(response || %{}) do
-      {:ok, response} -> response
-      {:error, changeset} -> raise Ecto.ChangeError, inspect({:error, changeset.errors})
+      {:ok, response} ->
+        response
+
+      {:error, changeset} ->
+        raise Ecto.ChangeError, inspect({:error, changeset.errors})
     end
   end
 end

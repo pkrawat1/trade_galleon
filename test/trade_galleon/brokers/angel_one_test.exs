@@ -13,7 +13,11 @@ defmodule TradeGalleon.Brokers.AngelOneTest do
 
   setup do
     Application.put_env(:trade_galleon, Broker, @config)
-    Tesla.Mock.mock(fn _ -> %Tesla.Env{status: 200, body: %{"message" => "SUCCESS", "data" => %{}}} end)
+
+    Tesla.Mock.mock(fn _ ->
+      %Tesla.Env{status: 200, body: %{"message" => "SUCCESS", "data" => %{}}}
+    end)
+
     %{config: Enum.into(@config, %{})}
   end
 
@@ -57,7 +61,8 @@ defmodule TradeGalleon.Brokers.AngelOneTest do
       params = %{"client_code" => "bad_client", "password" => "wrong", "totp" => "000000"}
       opts = [params: params, config: config]
 
-      assert {:error, %{"message" => "FAILED", "error" => "Invalid credentials"}} = Broker.login(opts)
+      assert {:error, %{"message" => "FAILED", "error" => "Invalid credentials"}} =
+               Broker.login(opts)
     end
 
     test "validates request params", %{config: config} do
@@ -92,11 +97,12 @@ defmodule TradeGalleon.Brokers.AngelOneTest do
       opts = [params: params, config: config, token: "current_token"]
 
       assert {:ok, %{"message" => "SUCCESS", "data" => data}} = Broker.generate_token(opts)
+
       assert %Responses.GenerateToken{
-        jwt_token: "new_jwt_token",
-        refresh_token: "new_refresh_token",
-        feed_token: "feed_token"
-      } = data
+               jwt_token: "new_jwt_token",
+               refresh_token: "new_refresh_token",
+               feed_token: "feed_token"
+             } = data
     end
   end
 
@@ -111,11 +117,12 @@ defmodule TradeGalleon.Brokers.AngelOneTest do
       opts = [token: "test_token", config: config]
 
       assert {:ok, %{"message" => "SUCCESS", "data" => data}} = Broker.profile(opts)
+
       assert %Responses.Profile{
-        client_code: "TEST01",
-        name: "Test User",
-        email: "test@example.com"
-      } = data
+               client_code: "TEST01",
+               name: "Test User",
+               email: "test@example.com"
+             } = data
     end
   end
 
@@ -167,9 +174,12 @@ defmodule TradeGalleon.Brokers.AngelOneTest do
         "from_date" => "2021-01-01 11:15",
         "to_date" => "2021-01-01 15:30"
       }
+
       opts = [params: params, token: "test_token", config: config]
 
-      assert {:ok, %{"message" => "SUCCESS", "data" => %Responses.CandleData{data: data}}} = Broker.candle_data(opts)
+      assert {:ok, %{"message" => "SUCCESS", "data" => %Responses.CandleData{data: data}}} =
+               Broker.candle_data(opts)
+
       assert is_list(data)
       assert length(data) == 1
     end
@@ -252,6 +262,7 @@ defmodule TradeGalleon.Brokers.AngelOneTest do
         "price" => "200",
         "quantity" => "1"
       }
+
       opts = [params: params, token: "test_token", config: config]
 
       assert {:ok, %{"message" => "SUCCESS", "data" => data}} = Broker.place_order(opts)
@@ -274,6 +285,7 @@ defmodule TradeGalleon.Brokers.AngelOneTest do
         "price" => "200",
         "quantity" => "1"
       }
+
       opts = [params: params, token: "test_token", config: config]
 
       assert {:ok, %{"message" => "SUCCESS", "data" => data}} = Broker.place_order(opts)
@@ -296,6 +308,7 @@ defmodule TradeGalleon.Brokers.AngelOneTest do
         "price" => "210",
         "quantity" => "2"
       }
+
       opts = [params: params, token: "test_token", config: config]
 
       assert {:ok, %{"message" => "SUCCESS", "data" => data}} = Broker.modify_order(opts)
@@ -319,7 +332,11 @@ defmodule TradeGalleon.Brokers.AngelOneTest do
     test "retrieves order status", %{config: config} do
       # Set up specific mock for order_status
       Tesla.Mock.mock(fn
-        %{method: :get, url: "https://apiconnect.angelbroking.com/rest/secure/angelbroking/order/v1/details/uniqueorder_id"} ->
+        %{
+          method: :get,
+          url:
+            "https://apiconnect.angelbroking.com/rest/secure/angelbroking/order/v1/details/uniqueorder_id"
+        } ->
           %Tesla.Env{
             status: 200,
             body: %{
@@ -377,6 +394,7 @@ defmodule TradeGalleon.Brokers.AngelOneTest do
           }
         ]
       }
+
       opts = [params: params, token: "test_token", config: config]
 
       assert {:ok, %{"message" => "SUCCESS", "data" => data}} = Broker.estimate_charges(opts)
@@ -389,12 +407,17 @@ defmodule TradeGalleon.Brokers.AngelOneTest do
       mock_error_response("profile", %{"message" => "FAILED", "error" => "Session expired"})
 
       opts = [token: "expired_token", config: config]
-      assert {:error, %{"message" => "FAILED", "error" => "Session expired"}} = Broker.profile(opts)
+
+      assert {:error, %{"message" => "FAILED", "error" => "Session expired"}} =
+               Broker.profile(opts)
     end
 
     test "handles network errors", %{config: config} do
       Tesla.Mock.mock(fn
-        %{method: :get, url: "https://apiconnect.angelbroking.com/rest/secure/angelbroking/user/v1/getProfile"} ->
+        %{
+          method: :get,
+          url: "https://apiconnect.angelbroking.com/rest/secure/angelbroking/user/v1/getProfile"
+        } ->
           {:error, :timeout}
       end)
 
@@ -466,6 +489,7 @@ defmodule TradeGalleon.Brokers.AngelOneTest do
     |> Enum.find_value(%{}, fn
       {Tesla.Middleware.Headers, :call, [headers]} ->
         Map.new(headers, fn {key, value} -> {key, value} end)
+
       _ ->
         false
     end)
