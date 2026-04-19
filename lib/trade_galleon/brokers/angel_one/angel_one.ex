@@ -3,7 +3,8 @@ defmodule TradeGalleon.Brokers.AngelOne do
   AngelOne Broker Module to interact with AngelOne API
   """
   use TradeGalleon.Adapter,
-    required_config: [:api_key, :local_ip, :public_ip, :mac_address, :secret_key]
+    # :public_ip is derived from :proxy_url at call-time; not required in config
+    required_config: [:api_key, :local_ip, :mac_address, :secret_key]
 
   alias TradeGalleon.Brokers.AngelOne.{Requests, Responses}
 
@@ -317,13 +318,22 @@ defmodule TradeGalleon.Brokers.AngelOne do
   def client(opts) do
     config = opts[:config]
 
+    # Derive the public IP from the proxy URL when one is configured.
+    # This ensures the X-ClientPublicIP header matches the outgoing IP
+    # that AngelOne sees for this client\'s registered API key.
+    public_ip =
+      case config[:proxy_url] do
+        nil -> config[:public_ip] || "0.0.0.0"
+        url -> URI.parse(url).host
+      end
+
     headers = [
       {"Content-Type", "application/json"},
       {"Accept", "application/json"},
       {"X-UserType", "USER"},
       {"X-SourceID", "WEB"},
       {"X-ClientLocalIP", config[:local_ip]},
-      {"X-ClientPublicIP", config[:public_ip]},
+      {"X-ClientPublicIP", public_ip},
       {"X-MACAddress", config[:mac_address]},
       {"X-PrivateKey", config[:api_key]}
     ]
@@ -351,7 +361,20 @@ defmodule TradeGalleon.Brokers.AngelOne do
        end}
     ]
 
-    Tesla.client(middleware)
+    # Route all HTTP requests through the client\'s dedicated proxy IP when
+    # proxy_url is configured (e.g. a webshare.io IP-authenticated proxy).
+    # This satisfies the government mandate that each client has its own static IP.
+    adapter =
+      case config[:proxy_url] do
+        nil ->
+          Tesla.Adapter.Hackney
+
+        url ->
+          uri = URI.parse(url)
+          {Tesla.Adapter.Hackney, [{:proxy, {uri.host, uri.port}}]}
+      end
+
+    Tesla.client(middleware, adapter)
   end
 
   defp gen_response({:ok, %{body: %{"message" => message} = body} = _env}, module)

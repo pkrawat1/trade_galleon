@@ -92,7 +92,7 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocket do
     new_subscriber_tick_timeout = subscriber_tick_timeout - @tick_interval
 
     case new_subscriber_tick_timeout do
-      timeout when timeout in 1000..(@tick_interval * 2) ->
+      timeout when timeout in 1000..(@tick_interval * 2)//1 ->
         :timer.send_after(new_subscriber_tick_timeout, self(), :tick)
 
         Logger.info(
@@ -101,7 +101,7 @@ defmodule TradeGalleon.Brokers.AngelOne.WebSocket do
 
         {:reply, {:text, "ping"}, %{state | subscriber_tick_timeout: new_subscriber_tick_timeout}}
 
-      timeout when timeout in (@tick_interval * 2)..@subscriber_tick_timeout ->
+      timeout when timeout in (@tick_interval * 2)..@subscriber_tick_timeout//1 ->
         {:reply, {:text, "ping"}, %{state | subscriber_tick_timeout: new_subscriber_tick_timeout}}
 
       _ ->
