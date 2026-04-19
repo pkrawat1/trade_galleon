@@ -384,6 +384,8 @@ defmodule TradeGalleon.Brokers.AngelOne do
                 proxy_opts
             end
 
+          IO.inspect(proxy_opts, label: "Proxy options for Tesla Hackney adapter")
+
           {Tesla.Adapter.Hackney, proxy_opts}
       end
 
