@@ -361,9 +361,11 @@ defmodule TradeGalleon.Brokers.AngelOne do
        end}
     ]
 
-    # Route all HTTP requests through the client\'s dedicated proxy IP when
-    # proxy_url is configured (e.g. a webshare.io IP-authenticated proxy).
+    # Route all HTTP requests through the client\'s dedicated proxy endpoint when
+    # proxy_url is configured (e.g. a webshare.io rotating-endpoint proxy).
     # This satisfies the government mandate that each client has its own static IP.
+    # Credentials (proxy_username / proxy_password) are account-level env vars;
+    # the proxy host:port is stored per-client in Firebase.
     adapter =
       case config[:proxy_url] do
         nil ->
@@ -371,7 +373,18 @@ defmodule TradeGalleon.Brokers.AngelOne do
 
         url ->
           uri = URI.parse(url)
-          {Tesla.Adapter.Hackney, [{:proxy, {uri.host, uri.port}}]}
+          proxy_opts = [{:proxy, {uri.host, uri.port}}]
+
+          proxy_opts =
+            case {config[:proxy_username], config[:proxy_password]} do
+              {user, pass} when is_binary(user) and is_binary(pass) ->
+                [{:proxy_auth, {user, pass}} | proxy_opts]
+
+              _ ->
+                proxy_opts
+            end
+
+          {Tesla.Adapter.Hackney, proxy_opts}
       end
 
     Tesla.client(middleware, adapter)
