@@ -348,7 +348,7 @@ defmodule TradeGalleon.Brokers.AngelOne do
     middleware = [
       {Tesla.Middleware.BaseUrl, @base_url},
       Tesla.Middleware.JSON,
-      Tesla.Middleware.Logger,
+      # Tesla.Middleware.Logger,
       {Tesla.Middleware.Headers, headers},
       {Tesla.Middleware.Retry,
        delay: 1000,
@@ -383,8 +383,6 @@ defmodule TradeGalleon.Brokers.AngelOne do
               _ ->
                 proxy_opts
             end
-
-          IO.inspect(proxy_opts, label: "Proxy options for Tesla Hackney adapter")
 
           {Tesla.Adapter.Hackney, proxy_opts}
       end
